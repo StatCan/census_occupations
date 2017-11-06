@@ -1,0 +1,21 @@
+{
+  "name": "census_occupations",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "author": "Laurent Goderre",
+  "license": "MIT",
+  "devDependencies": {
+    "d3-dsv": "^1.0.5",
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-csslint": "^2.0.0",
+    "grunt-contrib-uglify": "^2.2.0",
+    "grunt-json-minify": "^1.1.0",
+    "gruntify-eslint": "^3.1.0",
+    "load-grunt-tasks": "^3.5.2"
+  }
+}

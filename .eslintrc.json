@@ -1,0 +1,37 @@
+{
+    "env": {
+        "browser": true,
+        "jquery": true
+    },
+    "globals": {
+      "d3": true,
+      "i18n": true,
+      "i18next": true,
+      "sgc": true,
+      "statcan_countries": true,
+      "chordChart": true,
+      "wb": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 6
+    },
+    "rules": {
+        "indent": [
+            "error",
+            2, {"outerIIFEBody": 0}
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}
