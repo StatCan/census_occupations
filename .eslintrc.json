@@ -1,15 +1,15 @@
 {
     "env": {
         "browser": true,
-        "jquery": true
+        "jquery": true,
+        "commonjs": true
     },
     "globals": {
       "d3": true,
       "i18n": true,
       "i18next": true,
       "sgc": true,
-      "statcan_countries": true,
-      "chordChart": true,
+      "canada_noc": true,
       "wb": true
     },
     "extends": "eslint:recommended",

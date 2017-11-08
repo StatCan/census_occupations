@@ -4,12 +4,43 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   sgcDataUrl = "lib/statcan_sgc/sgc.json",
   nocDataUrl = "lib/canada-national-occupational-classification/noc.json",
   canadaOccupationsDataUrl = "data/census_occupations.json",
+  rootNs = "noc",
   container = d3.select(".occupations .data"),
   canadaSgc = "01",
-  currentSgcId = canadaSgc,
-  settings = {},
+  state = {
+    sgc: canadaSgc,
+    hcdd: 1,
+  },
   showData = function() {
+    var recurse = function(arr, level) {
+      var n, noc;
+      for (n = 0; n < arr.length; n++) {
+        noc = arr[n];
+        i18next.t(noc.id, {ns: "noc"});
+        console.log([
+          Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: rootNs}),
+          canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id, property: "med_earnings"})),
+          canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id, property: "count_elf_fyft"}))
+        ]);
+        if (noc.children !== undefined) {
+          recurse(noc.children, ++level);
+          --level;
+        }
+      }
+    };
 
+    recurse(nocData.roots, 0);
+  },
+  onSelect = function(e) {
+    switch(e.target.id){
+    case "sgc":
+      state.sgc = e.target.value;
+      break;
+    case "hcdd":
+      state.hcdd = parseInt(e.target.value, 10);
+      break;
+    }
+    showData();
   },
   nocData, canadaOccupationsData, sgcData;
 
@@ -20,9 +51,11 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
     .defer(d3.json, canadaOccupationsDataUrl)
     .await(function(error, sgcs, noc, occupations) {
       sgcData = sgcs;
-      nocData = noc;
-      canadaOccupationsData = occupations;
+      nocData = canada_noc(noc);
+      canadaOccupationsData = require("canada_census_data")(occupations);
 
       showData();
+
+      $(document).on("change", ".occupations", onSelect);
     });
 });
