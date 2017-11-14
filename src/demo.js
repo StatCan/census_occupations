@@ -4,7 +4,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   sgcDataUrl = "lib/statcan_sgc/sgc.json",
   nocDataUrl = "lib/canada-national-occupational-classification/noc.json",
   canadaOccupationsDataUrl = "data/census_occupations.json",
-  rootNs = "noc",
+  rootNs = "census_occupations",
+  nocNs = "noc",
   container = d3.select(".occupations .data"),
   canadaSgc = "01",
   state = {
@@ -16,9 +17,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       var n, noc;
       for (n = 0; n < arr.length; n++) {
         noc = arr[n];
-        i18next.t(noc.id, {ns: "noc"});
+        i18next.t(noc.id, {ns: nocNs});
         console.log([
-          Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: rootNs}),
+          Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}),
           canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id, property: "med_earnings"})),
           canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id, property: "count_elf_fyft"}))
         ]);
