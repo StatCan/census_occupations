@@ -11,26 +11,64 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   state = {
     sgc: canadaSgc,
     hcdd: 1,
+    property: "count_elf_fyft"
   },
   showData = function() {
-    var recurse = function(arr, level) {
-      var n, noc;
-      for (n = 0; n < arr.length; n++) {
-        noc = arr[n];
-        i18next.t(noc.id, {ns: nocNs});
-        console.log([
-          Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}),
-          canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id, property: "med_earnings"})),
-          canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id, property: "count_elf_fyft"}))
-        ]);
-        if (noc.children !== undefined) {
-          recurse(noc.children, ++level);
-          --level;
-        }
-      }
-    };
+    var bindData = function(data) {
+        var clone = [],
+          recurse = function(arr, parent) {
+            var n, noc, newNoc;
+            for (n = 0; n < arr.length; n++) {
+              noc = arr[n];
+              newNoc = {
+                id: noc.id
+              };
 
-    recurse(nocData.roots, 0);
+              if (noc.children !== undefined) {
+                newNoc.children = [];
+                recurse(noc.children, newNoc);
+              }
+
+              if (Array.isArray(parent)) {
+                parent.push(newNoc);
+              }
+              else if (typeof parent === "object") {
+                parent.children.push(newNoc);
+                newNoc.parent = parent;
+              }
+
+              newNoc[state.property] = canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id}));
+            }
+          };
+        recurse(data.roots, clone);
+        return clone;
+      },
+      binded = bindData(nocData);
+
+    // TODO: Remove when using the components
+    (function() {
+      var pre = container.select("pre");
+      if (pre.empty()) {
+        pre = container.append("pre");
+      } else {
+        pre.empty();
+      }
+      var recurse = function(arr, level) {
+        var n, noc;
+        for (n = 0; n < arr.length; n++) {
+          noc = arr[n];
+          i18next.t(noc.id, {ns: nocNs});
+          pre.append("div").text(
+            Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}) + "\t" + noc[state.property]
+          );
+          if (noc.children !== undefined) {
+            recurse(noc.children, ++level);
+            --level;
+          }
+        }
+      };
+      recurse(binded, 0);
+    })();
   },
   onSelect = function(e) {
     switch(e.target.id){
