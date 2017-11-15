@@ -48,11 +48,11 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     // TODO: Remove when using the components
     (function() {
       var pre = container.select("pre");
-      if (pre.empty()) {
-        pre = container.append("pre");
-      } else {
-        pre.empty();
+      if (!pre.empty()) {
+        pre.remove();
       }
+      pre = container.append("pre");
+
       var recurse = function(arr, level) {
         var n, noc;
         for (n = 0; n < arr.length; n++) {
