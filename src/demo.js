@@ -48,33 +48,33 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     }
   },
   getNocId = function(nocElmId) {
-    return nocElmId.replace(nocIdPrefix, "")
+    return nocElmId.replace(nocIdPrefix, "");
   },
   showData = function() {
     var bindData = function(data) {
         var clone = [],
           recurse = function(arr, parent) {
-            var n, noc, newNoc;
+            var n, noc, binding;
             for (n = 0; n < arr.length; n++) {
               noc = arr[n];
-              newNoc = {
-                id: noc.id
+              binding = {
+                nocId: noc.id
               };
 
               if (noc.children !== undefined) {
-                newNoc.children = [];
-                recurse(noc.children, newNoc);
+                binding.children = [];
+                recurse(noc.children, binding);
               }
 
               if (Array.isArray(parent)) {
-                parent.push(newNoc);
+                parent.push(binding);
               }
               else if (typeof parent === "object") {
-                parent.children.push(newNoc);
-                newNoc.parent = parent;
+                parent.children.push(binding);
+                binding.parent = parent;
               }
 
-              newNoc[state.property] = canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id}));
+              binding[state.property] = canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id}));
             }
           },
           noc;
@@ -103,9 +103,10 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       pre = container.append("pre");
 
       var recurse = function(arr, level) {
-        var n, noc;
+        var n, p, noc;
         for (n = 0; n < arr.length; n++) {
-          noc = arr[n];
+          p = arr[n];
+          noc = nocData.getNoc(p.nocId);
           i18next.t(noc.id, {ns: nocNs});
           pre.append("div")
             .attr("id", nocIdPrefix + noc.id)
@@ -121,10 +122,10 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
               return rootNocClassPrefix + up.id + " " + nocLvlPrefix + level;
             })
             .text(
-              Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}) + "\t" + noc[state.property]
+              Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}) + "\t" + p[state.property]
             );
-          if (noc.children !== undefined) {
-            recurse(noc.children, ++level);
+          if (p.children !== undefined) {
+            recurse(p.children, ++level);
             --level;
           }
         }
@@ -162,7 +163,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       medianIncome = canadaOccupationsData.getDataPoint($.extend({}, point, {property: medIncProp})),
       percent = workers / canadaOccupationsData.getDataPoint($.extend({}, point, {noc: allNoc}));
 
-    console.log([i18next.t(nocId, {ns: nocNs}), workersFormatter.format(workers), salaryFormatter.format(medianIncome), percentFormatter.format(percent)])
+    console.log([i18next.t(nocId, {ns: nocNs}), workersFormatter.format(workers), salaryFormatter.format(medianIncome), percentFormatter.format(percent)]);
   },
   onHoverFx = function(e) {
     var hoverTopClass = "hover",
