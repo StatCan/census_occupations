@@ -9,6 +9,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   container = d3.select(".occupations .data"),
   canadaSgc = "01",
   allNoc = "X",
+  rootNocClassPrefix = "rootnoc_",
   workersProp = "count_elf_fyft",
   medIncProp = "med_earnings",
   state = {
@@ -103,6 +104,17 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
           i18next.t(noc.id, {ns: nocNs});
           pre.append("div")
             .attr("id", noc.id)
+            .attr("class", function() {
+              var up = noc,
+                level = 1;
+
+              while (up.parent !== undefined) {
+                up = up.parent;
+                level++;
+              }
+
+              return rootNocClassPrefix + up.id + " lvl" + level;
+            })
             .text(
               Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}) + "\t" + noc[state.property]
             );
