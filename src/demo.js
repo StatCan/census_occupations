@@ -8,6 +8,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   nocNs = "noc",
   container = d3.select(".occupations .data"),
   canadaSgc = "01",
+  allNoc = "X",
   state = {
     sgc: canadaSgc,
     hcdd: 1,
@@ -39,8 +40,20 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
 
               newNoc[state.property] = canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id}));
             }
-          };
-        recurse(data.roots, clone);
+          },
+          noc;
+
+        if (state.noc === undefined ) {
+          recurse(data.roots, clone);
+        } else {
+          noc = nocData.getNoc(state.noc);
+          if (noc.children !== undefined) {
+            recurse(noc.children, clone);
+          } else {
+            recurse([noc], clone);
+          }
+        }
+
         return clone;
       },
       binded = bindData(nocData);
@@ -72,6 +85,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   },
   onSelect = function(e) {
     switch(e.target.id){
+    case "noc":
+      state.noc = e.target.value !== allNoc ? e.target.value : undefined;
+      break;
     case "sgc":
       state.sgc = e.target.value;
       break;
