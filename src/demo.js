@@ -9,10 +9,40 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   container = d3.select(".occupations .data"),
   canadaSgc = "01",
   allNoc = "X",
+  workersProp = "count_elf_fyft",
+  medIncProp = "med_earnings",
   state = {
     sgc: canadaSgc,
     hcdd: 1,
-    property: "count_elf_fyft"
+    property: workersProp
+  },
+  workersFormatter = i18n.getNumberFormatter(0),
+  salaryFormatter = {
+    _formatter: i18n.getNumberFormatter({
+      style: "currency",
+      currency: "CAD",
+      currencyDisplay: "symbol",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }),
+    format: function() {
+      var output = this._formatter.format.apply(this, arguments);
+      return output.replace("CA", "");
+    }
+  },
+  percentFormatter = {
+    _formatter: i18n.getNumberFormatter({
+      style: "percent",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }),
+    cutOff: 1 / 10000,
+    format: function(value) {
+      if (value > 0 && value < this.cutOff)
+        return "< " + this._formatter.format(this.cutOff);
+
+      return this._formatter.format(value);
+    }
   },
   showData = function() {
     var bindData = function(data) {
@@ -71,9 +101,11 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         for (n = 0; n < arr.length; n++) {
           noc = arr[n];
           i18next.t(noc.id, {ns: nocNs});
-          pre.append("div").text(
-            Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}) + "\t" + noc[state.property]
-          );
+          pre.append("div")
+            .attr("id", noc.id)
+            .text(
+              Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}) + "\t" + noc[state.property]
+            );
           if (noc.children !== undefined) {
             recurse(noc.children, ++level);
             --level;
@@ -97,6 +129,20 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     }
     showData();
   },
+  onHover = function(e) {
+    var nocId = e.target.id,
+      point = {
+        sgc: state.sgc,
+        hcdd: state.hcdd,
+        noc: nocId,
+        property: workersProp
+      },
+      workers = canadaOccupationsData.getDataPoint(point),
+      medianIncome = canadaOccupationsData.getDataPoint($.extend({}, point, {property: medIncProp})),
+      percent = workers / canadaOccupationsData.getDataPoint($.extend({}, point, {noc: allNoc}));
+
+    console.log([i18next.t(nocId, {ns: nocNs}), workersFormatter.format(workers), salaryFormatter.format(medianIncome), percentFormatter.format(percent)])
+  },
   nocData, canadaOccupationsData, sgcData;
 
 i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
@@ -112,5 +158,6 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
       showData();
 
       $(document).on("change", ".occupations", onSelect);
+      $(document).on("mouseover click", ".data div", onHover);
     });
 });
