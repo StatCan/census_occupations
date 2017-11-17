@@ -10,6 +10,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   canadaSgc = "01",
   allNoc = "X",
   rootNocClassPrefix = "rootnoc_",
+  nocIdPrefix = "noc",
+  nocLvlPrefix = "lvl",
   workersProp = "count_elf_fyft",
   medIncProp = "med_earnings",
   state = {
@@ -44,6 +46,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
 
       return this._formatter.format(value);
     }
+  },
+  getNocId = function(nocElmId) {
+    return nocElmId.replace(nocIdPrefix, "")
   },
   showData = function() {
     var bindData = function(data) {
@@ -103,7 +108,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
           noc = arr[n];
           i18next.t(noc.id, {ns: nocNs});
           pre.append("div")
-            .attr("id", noc.id)
+            .attr("id", nocIdPrefix + noc.id)
             .attr("class", function() {
               var up = noc,
                 level = 1;
@@ -113,7 +118,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
                 level++;
               }
 
-              return rootNocClassPrefix + up.id + " lvl" + level;
+              return rootNocClassPrefix + up.id + " " + nocLvlPrefix + level;
             })
             .text(
               Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}) + "\t" + noc[state.property]
@@ -130,7 +135,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   onSelect = function(e) {
     switch(e.target.id){
     case "noc":
-      state.noc = e.target.value !== allNoc ? e.target.value : undefined;
+      state.noc = e.target.value !== allNoc ? getNocId(e.target.value) : undefined;
       break;
     case "sgc":
       state.sgc = e.target.value;
@@ -141,8 +146,12 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     }
     showData();
   },
-  onHover = function(e) {
-    var nocId = e.target.id,
+  onHover = function() {
+    onHoverText.apply(this, arguments);
+    onHoverFx.apply(this, arguments);
+  },
+  onHoverText = function(e) {
+    var nocId = getNocId(e.target.id),
       point = {
         sgc: state.sgc,
         hcdd: state.hcdd,
@@ -155,7 +164,42 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
 
     console.log([i18next.t(nocId, {ns: nocNs}), workersFormatter.format(workers), salaryFormatter.format(medianIncome), percentFormatter.format(percent)])
   },
-  nocData, canadaOccupationsData, sgcData;
+  onHoverFx = function(e) {
+    var hoverTopClass = "hover",
+      hoverClass = "hovering",
+      getNocSelector = function(nocId) {
+        return "#" + nocIdPrefix + nocId;
+      },
+      hoverIn = function() {
+        var nocId = getNocId(e.target.id),
+          noc = nocData.getNoc(nocId),
+          selector = getNocSelector(nocId),
+          up = noc;
+        container.classed(hoverTopClass, true);
+
+        while (up.parent !== undefined) {
+          up = up.parent;
+          selector += "," + getNocSelector(up.id);
+        }
+
+        container.selectAll("." + hoverClass).classed(hoverClass, false);
+        container.selectAll(selector).classed(hoverClass, true);
+      },
+      hoverOut = function() {
+        container.classed(hoverTopClass, false);
+
+      };
+
+    clearTimeout(hoverTimeout);
+    switch (e.type) {
+    case "mouseover":
+      hoverIn();
+      break;
+    case "mouseout":
+      hoverTimeout = setTimeout(hoverOut, 100);
+    }
+  },
+  nocData, canadaOccupationsData, sgcData, hoverTimeout;
 
 i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
   d3.queue()
@@ -170,6 +214,6 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
       showData();
 
       $(document).on("change", ".occupations", onSelect);
-      $(document).on("mouseover click", ".data div", onHover);
+      $(document).on("mouseover mouseout click", ".data div", onHover);
     });
 });

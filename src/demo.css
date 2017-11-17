@@ -6,6 +6,11 @@
 	color: #fff;
 }
 
+/* TODO: Change selector after the switch to SVG */
+.hover div:not(.hovering) {
+	opacity: .2;
+}
+
 .rootnoc_0.lvl1 {
 	background-color: #524ABA; /* TODO: Remove line when using SVG */
 	fill: #524ABA;
