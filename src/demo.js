@@ -161,9 +161,15 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       },
       workers = canadaOccupationsData.getDataPoint(point),
       medianIncome = canadaOccupationsData.getDataPoint($.extend({}, point, {property: medIncProp})),
-      percent = workers / canadaOccupationsData.getDataPoint($.extend({}, point, {noc: allNoc}));
+      percent = workers / canadaOccupationsData.getDataPoint($.extend({}, point, {noc: allNoc})),
+      text;
 
-    console.log([i18next.t(nocId, {ns: nocNs}), workersFormatter.format(workers), salaryFormatter.format(medianIncome), percentFormatter.format(percent)]);
+    text = "----" + "\n" + i18next.t(nocId, {ns: nocNs}) + "\n\n";
+    text += i18next.t("average_inc", {ns: rootNs}) + "\n" + salaryFormatter.format(medianIncome) + "\n\n";
+    text += i18next.t("num_ppl", {ns: rootNs}) + "\n" + workersFormatter.format(workers) + "\n\n";
+    text += i18next.t("pct_ppl", {ns: rootNs}) + "\n" + percentFormatter.format(percent);
+
+    console.log(text);
   },
   onHoverFx = function(e) {
     var hoverTopClass = "hover",
