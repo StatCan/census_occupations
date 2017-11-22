@@ -7,6 +7,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   rootNs = "census_occupations",
   nocNs = "noc",
   container = d3.select(".occupations .data"),
+  chart = container.append("svg")
+    .attr("id", "census_occupations"),
   canadaSgc = "01",
   allNoc = "X",
   rootNocClassPrefix = "rootnoc_",
@@ -47,6 +49,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       return this._formatter.format(value);
     }
   },
+  settings = {
+
+  },
   getNocId = function(nocElmId) {
     return nocElmId.replace(nocIdPrefix, "");
   },
@@ -71,7 +76,6 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
               }
               else if (typeof parent === "object") {
                 parent.children.push(binding);
-                binding.parent = parent;
               }
 
               binding[state.property] = canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id}));
@@ -92,7 +96,11 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
 
         return clone;
       },
-      binded = bindData(nocData);
+      data = {
+        children: bindData(nocData)
+      };
+
+    sunburstChart(chart, settings, data);
 
     // TODO: Remove when using the components
     (function() {
@@ -130,7 +138,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
           }
         }
       };
-      recurse(binded, 0);
+      recurse(data.children, 0);
     })();
   },
   onSelect = function(e) {

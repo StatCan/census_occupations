@@ -12,7 +12,7 @@ var defaults = {
   width: 600
 };
 
-this.sunburstChart = function(svg, settings) {
+this.sunburstChart = function(svg, settings, data) {
   var mergedSettings = extend(true, {}, defaults, settings),
     outerWidth = mergedSettings.width,
     outerHeight = Math.ceil(outerWidth / mergedSettings.aspectRatio),
@@ -25,7 +25,7 @@ this.sunburstChart = function(svg, settings) {
     draw = function() {
       var sett = this.settings,
         data = (sett.filterData && typeof sett.filterData === "function") ?
-          sett.filterData.call(sett, sett.data) : sett.data
+          sett.filterData.call(sett, data) : data
 
     },
     rtnObj, process;
@@ -51,9 +51,9 @@ this.sunburstChart = function(svg, settings) {
     if (mergedSettings.datatable === false) return;
     d3.stcExt.addIEShim(svg, outerHeight, outerWidth);
   };
-  if (!mergedSettings.data) {
-    d3.json(mergedSettings.url, function(error, data) {
-      mergedSettings.data = data;
+  if (!data) {
+    d3.json(mergedSettings.url, function(error, json) {
+      data = json;
       process();
     });
   } else {

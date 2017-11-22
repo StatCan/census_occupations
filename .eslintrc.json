@@ -10,7 +10,8 @@
       "i18next": true,
       "sgc": true,
       "canada_noc": true,
-      "wb": true
+      "wb": true,
+      "sunburstChart": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
