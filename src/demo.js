@@ -60,6 +60,12 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         return d[state.property];
       return 0;
     },
+    getText: function(d) {
+      if (d.value > 0) {
+        return i18next.t(d.data.nocId, {ns: nocNs});
+      }
+      return "";
+    },
     getClass: function(d) {
       var up = d,
         level = 1,
@@ -213,40 +219,40 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
       nocData = canada_noc(noc);
       canadaOccupationsData = require("canada_census_data")(occupations);
 
-      var info = chart.append("g")
-        .attr("class", "info");
-
-      info.append("text")
+      var info = chart.append("text")
         .attr("x", 300)
         .attr("y", 180)
+        .attr("class", "info");
+
+      info.append("tspan")
         .attr("class", "h6")
         .text(i18next.t("average_inc", {ns: rootNs}));
 
-      info.append("text")
+      info.append("tspan")
         .attr("x", 300)
         .attr("y", 180)
         .attr("dy", "1.4em")
         .attr("class", "income value");
 
-      info.append("text")
+      info.append("tspan")
         .attr("x", 300)
         .attr("y", 230)
         .attr("class", "h6")
         .text(i18next.t("num_ppl", {ns: rootNs}));
 
-      info.append("text")
+      info.append("tspan")
         .attr("x", 300)
         .attr("y", 230)
         .attr("dy", "1.4em")
         .attr("class", "num value");
 
-      info.append("text")
+      info.append("tspan")
         .attr("x", 300)
         .attr("y", 280)
         .attr("class", "h6")
         .text(i18next.t("num_ppl", {ns: rootNs}));
 
-      info.append("text")
+      info.append("tspan")
         .attr("x", 300)
         .attr("y", 280)
         .attr("dy", "1.4em")

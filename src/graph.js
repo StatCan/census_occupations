@@ -37,7 +37,8 @@ this.sunburstChart = function(svg, settings, data) {
           .innerRadius(function(d) { return Math.max(0, y(d.y0)); })
           .outerRadius(function(d) { return Math.max(0, y(d.y1)); }),
         valueFn = sett.getValue ? sett.getValue.bind(sett) : null,
-        arcsId = sett.getId ? sett.getId.bind(sett) : null,
+        arcsIdFn = sett.getId ? sett.getId.bind(sett) : null,
+        textFn = sett.getText ? sett.getText.bind(sett) : null,
         classFn = function(d,i){
           var cl = "arc arc" + (i + 1);
 
@@ -60,18 +61,32 @@ this.sunburstChart = function(svg, settings, data) {
       }
       arcs = dataLayer
         .selectAll(".arc")
-        .data(partition(root).descendants(), arcsId);
+        .data(partition(root).descendants(), arcsIdFn);
 
       arcs
         .enter()
         .append("g")
-        .attr("id", arcsId)
+        .attr("id", arcsIdFn)
         .attr("class", classFn)
-        .each(function() {
-          var parent = d3.select(this);
+        .each(function(d, index) {
+          var parent = d3.select(this),
+            arcId = function() {
+              return svg.attr("id") + "arc" + index;
+            };
 
           parent.append("path")
+            .attr("id", arcId)
             .attr("d", arc);
+
+          parent.append("text")
+            .attr("dy", 15)
+            .attr("dx", 5)
+            .attr("aria-hidden", "true")
+            .append("textPath")
+              .attr("xlink:href", function() {
+                return "#" + arcId.apply(this, arguments);
+              })
+              .text(textFn);
         });
 
       arcs
@@ -81,6 +96,9 @@ this.sunburstChart = function(svg, settings, data) {
 
           parent.select("path")
             .attr("d", arc);
+
+          parent.select("text textPath")
+            .text(textFn);
         });
     },
     rtnObj, process;

@@ -4,10 +4,12 @@
 
 .data .arc text {
 	fill: #fff;
+	font-size: 60%;
+	font-weight: bold;
 	pointer-events: none;
 }
 
-.data .info text {
+.data .info {
 	text-anchor: middle;
 }
 
