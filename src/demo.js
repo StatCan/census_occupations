@@ -52,7 +52,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   settings = {
     aspectRatio: 16 / 12,
     getId: function(d) {
-      return d.data.nocId;
+      return nocIdPrefix + d.data.nocId;
     },
     getValue: function(d) {
       if (d.children === undefined)
@@ -64,12 +64,12 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         level = 1,
         rootId;
 
-      while (up.parent !== undefined && up.parent !== null && this.getId(up.parent) !== undefined) {
+      while (up.parent !== undefined && up.parent !== null && up.parent.data.nocId !== undefined) {
         up = up.parent;
         level++;
       }
 
-      rootId = this.getId(up);
+      rootId = up.data.nocId;
 
       if (rootId !== undefined)
         return rootNocClassPrefix + rootId + " " + nocLvlPrefix + level;
@@ -172,23 +172,22 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         return "#" + nocIdPrefix + nocId;
       },
       hoverIn = function() {
-        var nocId = getNocId(e.target.id),
+        var nocId = getNocId(e.target.parentNode.id),
           noc = nocData.getNoc(nocId),
           selector = getNocSelector(nocId),
           up = noc;
-        container.classed(hoverTopClass, true);
+        chart.classed(hoverTopClass, true);
 
         while (up.parent !== undefined) {
           up = up.parent;
           selector += "," + getNocSelector(up.id);
         }
 
-        container.selectAll("." + hoverClass).classed(hoverClass, false);
-        container.selectAll(selector).classed(hoverClass, true);
+        chart.selectAll("." + hoverClass).classed(hoverClass, false);
+        chart.selectAll(selector).classed(hoverClass, true);
       },
       hoverOut = function() {
-        container.classed(hoverTopClass, false);
-
+        chart.classed(hoverTopClass, false);
       };
 
     clearTimeout(hoverTimeout);
@@ -215,6 +214,6 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
       showData();
 
       $(document).on("change", ".occupations", onSelect);
-      $(document).on("mouseover mouseout click", ".data div", onHover);
+      $(document).on("mouseover mouseout click", ".data .arc", onHover);
     });
 });

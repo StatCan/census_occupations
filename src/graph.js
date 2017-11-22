@@ -65,6 +65,7 @@ this.sunburstChart = function(svg, settings, data) {
       arcs
         .enter()
         .append("g")
+        .attr("id", arcsId)
         .attr("class", classFn)
         .each(function() {
           var parent = d3.select(this);

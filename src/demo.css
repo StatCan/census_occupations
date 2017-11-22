@@ -2,8 +2,7 @@
 	fill: #fff;
 }
 
-/* TODO: Change selector after the switch to SVG */
-.hover div:not(.hovering) {
+.hover .arc:not(.hovering) {
 	opacity: .2;
 }
 
