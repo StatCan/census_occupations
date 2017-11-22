@@ -50,7 +50,30 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     }
   },
   settings = {
+    aspectRatio: 16 / 12,
+    getId: function(d) {
+      return d.data.nocId;
+    },
+    getValue: function(d) {
+      return d[state.property];
+    },
+    getClass: function(d) {
+      var up = d,
+        level = 1,
+        rootId;
 
+      while (up.parent !== undefined && up.parent !== null && this.getId(up.parent) !== undefined) {
+        up = up.parent;
+        level++;
+      }
+
+      rootId = this.getId(up);
+
+      if (rootId !== undefined)
+        return rootNocClassPrefix + rootId + " " + nocLvlPrefix + level;
+
+      return "root";
+    }
   },
   getNocId = function(nocElmId) {
     return nocElmId.replace(nocIdPrefix, "");

@@ -11,6 +11,10 @@
 	opacity: .2;
 }
 
+.root {
+	fill:#fff;
+}
+
 .rootnoc_0.lvl1 {
 	background-color: #524ABA; /* TODO: Remove line when using SVG */
 	fill: #524ABA;
