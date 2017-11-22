@@ -55,7 +55,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       return d.data.nocId;
     },
     getValue: function(d) {
-      return d[state.property];
+      if (d.children === undefined)
+        return d[state.property];
+      return 0;
     },
     getClass: function(d) {
       var up = d,
