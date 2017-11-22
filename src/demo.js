@@ -19,7 +19,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   state = {
     sgc: canadaSgc,
     hcdd: 1,
-    property: workersProp
+    property: workersProp,
+    noc: "X"
   },
   workersFormatter = i18n.getNumberFormatter(0),
   salaryFormatter = {
@@ -108,7 +109,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
           },
           noc;
 
-        if (state.noc === undefined ) {
+        if (state.noc === undefined || state.noc === "X") {
           recurse(data.roots, clone);
         } else {
           noc = nocData.getNoc(state.noc);
@@ -126,6 +127,20 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       };
 
     sunburstChart(chart, settings, data);
+    showValues();
+  },
+  showValues = function(sett) {
+    var info = chart.select(".info"),
+      workers, medianIncome, percent;
+
+    sett = sett || state;
+    workers = canadaOccupationsData.getDataPoint(sett);
+    medianIncome = canadaOccupationsData.getDataPoint($.extend({}, sett, {property: medIncProp}));
+    percent = workers / canadaOccupationsData.getDataPoint($.extend({}, sett, {noc: allNoc}));
+
+    info.select(".income").text(salaryFormatter.format(medianIncome));
+    info.select(".num").text(workersFormatter.format(workers));
+    info.select(".pt").text(percentFormatter.format(percent));
   },
   onSelect = function(e) {
     switch(e.target.id){
@@ -141,41 +156,19 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     }
     showData();
   },
-  onHover = function() {
-    onHoverText.apply(this, arguments);
-    onHoverFx.apply(this, arguments);
-  },
-  onHoverText = function(e) {
-    var nocId = getNocId(e.target.id),
-      point = {
-        sgc: state.sgc,
-        hcdd: state.hcdd,
-        noc: nocId,
-        property: workersProp
-      },
-      workers = canadaOccupationsData.getDataPoint(point),
-      medianIncome = canadaOccupationsData.getDataPoint($.extend({}, point, {property: medIncProp})),
-      percent = workers / canadaOccupationsData.getDataPoint($.extend({}, point, {noc: allNoc})),
-      text;
-
-    text = "----" + "\n" + i18next.t(nocId, {ns: nocNs}) + "\n\n";
-    text += i18next.t("average_inc", {ns: rootNs}) + "\n" + salaryFormatter.format(medianIncome) + "\n\n";
-    text += i18next.t("num_ppl", {ns: rootNs}) + "\n" + workersFormatter.format(workers) + "\n\n";
-    text += i18next.t("pct_ppl", {ns: rootNs}) + "\n" + percentFormatter.format(percent);
-
-    console.log(text);
-  },
-  onHoverFx = function(e) {
+  onHover = function(e) {
     var hoverTopClass = "hover",
       hoverClass = "hovering",
       getNocSelector = function(nocId) {
         return "#" + nocIdPrefix + nocId;
       },
-      hoverIn = function() {
+      hoverIn  = function() {
         var nocId = getNocId(e.target.parentNode.id),
           noc = nocData.getNoc(nocId),
           selector = getNocSelector(nocId),
           up = noc;
+
+        // Hover Arcs effect
         chart.classed(hoverTopClass, true);
 
         while (up.parent !== undefined) {
@@ -185,9 +178,18 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
 
         chart.selectAll("." + hoverClass).classed(hoverClass, false);
         chart.selectAll(selector).classed(hoverClass, true);
+
+        // Update info text
+        showValues({
+          sgc: state.sgc,
+          hcdd: state.hcdd,
+          noc: nocId,
+          property: workersProp
+        });
       },
       hoverOut = function() {
         chart.classed(hoverTopClass, false);
+        showValues();
       };
 
     clearTimeout(hoverTimeout);
@@ -210,6 +212,45 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
       sgcData = sgcs;
       nocData = canada_noc(noc);
       canadaOccupationsData = require("canada_census_data")(occupations);
+
+      var info = chart.append("g")
+        .attr("class", "info");
+
+      info.append("text")
+        .attr("x", 300)
+        .attr("y", 180)
+        .attr("class", "h6")
+        .text(i18next.t("average_inc", {ns: rootNs}));
+
+      info.append("text")
+        .attr("x", 300)
+        .attr("y", 180)
+        .attr("dy", "1.4em")
+        .attr("class", "income value");
+
+      info.append("text")
+        .attr("x", 300)
+        .attr("y", 230)
+        .attr("class", "h6")
+        .text(i18next.t("num_ppl", {ns: rootNs}));
+
+      info.append("text")
+        .attr("x", 300)
+        .attr("y", 230)
+        .attr("dy", "1.4em")
+        .attr("class", "num value");
+
+      info.append("text")
+        .attr("x", 300)
+        .attr("y", 280)
+        .attr("class", "h6")
+        .text(i18next.t("num_ppl", {ns: rootNs}));
+
+      info.append("text")
+        .attr("x", 300)
+        .attr("y", 280)
+        .attr("dy", "1.4em")
+        .attr("class", "pt value");
 
       showData();
 

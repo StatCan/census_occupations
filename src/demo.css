@@ -7,13 +7,20 @@
 	pointer-events: none;
 }
 
+.data .info text {
+	text-anchor: middle;
+}
+
+.data .info .value {
+	font-size: 80%;
+}
+
 .hover .arc:not(.hovering) {
 	opacity: .2;
 }
 
 .arc.root {
-	fill:#fff;
-	pointer-events: none;
+	display: none;
 }
 
 .rootnoc_0.lvl1 {
