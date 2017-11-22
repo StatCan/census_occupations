@@ -74,7 +74,14 @@ this.sunburstChart = function(svg, settings, data) {
             .attr("d", arc);
         });
 
+      arcs
+        .attr("class", classFn)
+        .each(function() {
+          var parent = d3.select(this);
 
+          parent.select("path")
+            .attr("d", arc);
+        });
     },
     rtnObj, process;
 
