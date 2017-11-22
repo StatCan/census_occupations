@@ -124,45 +124,6 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       };
 
     sunburstChart(chart, settings, data);
-
-    // TODO: Remove when using the components
-    (function() {
-      var pre = container.select("pre");
-      if (!pre.empty()) {
-        pre.remove();
-      }
-      pre = container.append("pre");
-
-      var recurse = function(arr, level) {
-        var n, p, noc;
-        for (n = 0; n < arr.length; n++) {
-          p = arr[n];
-          noc = nocData.getNoc(p.nocId);
-          i18next.t(noc.id, {ns: nocNs});
-          pre.append("div")
-            .attr("id", nocIdPrefix + noc.id)
-            .attr("class", function() {
-              var up = noc,
-                level = 1;
-
-              while (up.parent !== undefined) {
-                up = up.parent;
-                level++;
-              }
-
-              return rootNocClassPrefix + up.id + " " + nocLvlPrefix + level;
-            })
-            .text(
-              Array(level).fill("  ").join("") + i18next.t(noc.id, {ns: nocNs}) + "\t" + p[state.property]
-            );
-          if (p.children !== undefined) {
-            recurse(p.children, ++level);
-            --level;
-          }
-        }
-      };
-      recurse(data.children, 0);
-    })();
   },
   onSelect = function(e) {
     switch(e.target.id){
