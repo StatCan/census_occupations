@@ -1,13 +1,19 @@
+.data .arc {
+	pointer-events: all;
+}
+
 .data .arc text {
 	fill: #fff;
+	pointer-events: none;
 }
 
 .hover .arc:not(.hovering) {
 	opacity: .2;
 }
 
-.root {
+.arc.root {
 	fill:#fff;
+	pointer-events: none;
 }
 
 .rootnoc_0.lvl1 {
