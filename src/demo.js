@@ -145,7 +145,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   onSelect = function(e) {
     switch(e.target.id){
     case "noc":
-      state.noc = e.target.value !== allNoc ? getNocId(e.target.value) : undefined;
+      state.noc = e.target.value !== allNoc ? getNocId(e.target.value) : allNoc;
       break;
     case "sgc":
       state.sgc = e.target.value;
