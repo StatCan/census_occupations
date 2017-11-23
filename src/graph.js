@@ -150,7 +150,7 @@ this.sunburstChart = function(svg, settings, data) {
             .attr("d", arc);
 
           parent.select("text textPath")
-            .text(textFn);
+            .text(truncateText);
         });
     },
     rtnObj, process;
