@@ -163,6 +163,11 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
           selector = getNocSelector(nocId),
           up = noc;
 
+        if (up === undefined) {
+          hoverOut();
+          return;
+        }
+
         // Hover Arcs effect
         chart.classed(hoverTopClass, true);
 
