@@ -7,7 +7,7 @@ var defaults = {
     left: 2
   },
   arcsWidth: 20,
-  padding: 0.0009,
+  padding: 0,
   aspectRatio: 16 / 9,
   width: 600
 };
