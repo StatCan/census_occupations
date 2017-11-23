@@ -20,6 +20,7 @@ this.sunburstChart = function(svg, settings, data) {
     innerWidth = mergedSettings.innerWidth = outerWidth - mergedSettings.margin.left - mergedSettings.margin.right,
     chartInner = svg.select("g"),
     dataLayer = chartInner.select(".data"),
+    elipsis = "...",
     transition = d3.transition()
       .duration(1000),
     draw = function() {
@@ -31,9 +32,15 @@ this.sunburstChart = function(svg, settings, data) {
           .range([0, 2 * Math.PI]),
         y = rtnObj.y = d3.scaleSqrt()
           .range([0, outerRadius]),
+        getStartAngle = function(d) {
+          return Math.max(0, Math.min(2 * Math.PI, x(d.x0)));
+        },
+        getEndAngle = function(d) {
+          return Math.max(0, Math.min(2 * Math.PI, x(d.x1)));
+        },
         arc = d3.arc()
-          .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x0))); })
-          .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x1))); })
+          .startAngle(getStartAngle)
+          .endAngle(getEndAngle)
           .innerRadius(function(d) { return Math.max(0, y(d.y0)); })
           .outerRadius(function(d) { return Math.max(0, y(d.y1)); }),
         valueFn = sett.getValue ? sett.getValue.bind(sett) : null,
@@ -47,6 +54,44 @@ this.sunburstChart = function(svg, settings, data) {
           }
 
           return cl;
+        },
+        getTextLength = function(obj, text) {
+          var textObj = d3.select(obj),
+            oldText = textObj.text(),
+            value;
+
+          textObj.text(text);
+          value = obj.getSubStringLength(0, text.length);
+          textObj.text(oldText);
+
+          return value;
+        },
+        truncateText = function(d, i, selection) {
+          var obj = selection[0],
+            text = textFn.apply(this, arguments),
+            angle, arcLength, elipsisLength, textLength, elipsisRatio, ratio;
+
+          if (text.length < 1)
+            return text;
+
+          angle = (getEndAngle(d) - getStartAngle(d)) / (2 * Math.PI);
+          arcLength = angle * 2 * Math.PI * y((d.y1 - d.y0) / 2 + d.y0);
+          elipsisLength = getTextLength(obj, elipsis);
+          textLength = getTextLength(obj, text);
+          elipsisRatio = elipsisLength / arcLength,
+          ratio = textLength / arcLength;
+
+          if (elipsisRatio > 0.5 || arcLength <= 0) {
+            text = "";
+          } else if (ratio > 1) {
+            text = text.substr(0, text.length * 1 / ratio) ;
+            while (getTextLength(obj, text + elipsis) > arcLength){
+              text = text.substr(0,text.length - 1);
+            }
+            text += elipsis;
+          }
+
+          return text;
         },
         partition = d3.partition()
           .padding(sett.padding),
@@ -72,21 +117,26 @@ this.sunburstChart = function(svg, settings, data) {
           var parent = d3.select(this),
             arcId = function() {
               return svg.attr("id") + "arc" + index;
-            };
+            },
+            textObj, text;
 
           parent.append("path")
             .attr("id", arcId)
             .attr("d", arc);
 
-          parent.append("text")
+          textObj = parent.append("text")
             .attr("dy", 15)
             .attr("dx", 5)
             .attr("aria-hidden", "true")
-            .append("textPath")
-              .attr("xlink:href", function() {
-                return "#" + arcId.apply(this, arguments);
-              })
-              .text(textFn);
+            .text(truncateText);
+
+          text = textObj.text();
+
+          textObj.text(null).append("textPath")
+            .attr("xlink:href", function() {
+              return "#" + arcId.apply(this, arguments);
+            })
+            .text(text);
         });
 
       arcs
