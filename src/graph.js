@@ -21,6 +21,7 @@ this.sunburstChart = function(svg, settings, data) {
     chartInner = svg.select("g"),
     dataLayer = chartInner.select(".data"),
     elipsis = "...",
+    arcPadding = 5,
     transition = d3.transition()
       .duration(1000),
     draw = function() {
@@ -69,13 +70,14 @@ this.sunburstChart = function(svg, settings, data) {
         truncateText = function(d, i, selection) {
           var obj = selection[0],
             text = textFn.apply(this, arguments),
-            angle, arcLength, elipsisLength, textLength, elipsisRatio, ratio;
+            angle, radius, arcLength, elipsisLength, textLength, elipsisRatio, ratio;
 
           if (text.length < 1)
             return text;
 
           angle = (getEndAngle(d) - getStartAngle(d)) / (2 * Math.PI);
-          arcLength = angle * 2 * Math.PI * y((d.y1 - d.y0) / 2 + d.y0);
+          radius = y((d.y1 - d.y0) * 2 / 3 + d.y0);
+          arcLength = (angle * 2 * Math.PI * radius) - arcPadding;
           elipsisLength = getTextLength(obj, elipsis);
           textLength = getTextLength(obj, text);
           elipsisRatio = elipsisLength / arcLength,
@@ -126,7 +128,7 @@ this.sunburstChart = function(svg, settings, data) {
 
           textObj = parent.append("text")
             .attr("dy", 15)
-            .attr("dx", 5)
+            .attr("dx", arcPadding)
             .attr("aria-hidden", "true")
             .text(truncateText);
 
