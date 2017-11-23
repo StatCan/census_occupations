@@ -112,20 +112,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
 
               binding[state.property] = canadaOccupationsData.getDataPoint($.extend({}, state, {noc: noc.id}));
             }
-          },
-          noc;
+          };
 
-        if (state.noc === undefined || state.noc === "X") {
-          recurse(data.roots, clone);
-        } else {
-          noc = nocData.getNoc(state.noc);
-          if (noc.children !== undefined) {
-            recurse(noc.children, clone);
-          } else {
-            recurse([noc], clone);
-          }
-        }
-
+        recurse(data.roots, clone);
         return clone;
       },
       data = {
