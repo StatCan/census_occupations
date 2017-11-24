@@ -75,8 +75,9 @@ this.sunburstChart = function(svg, settings, data) {
             }
           };
         },
-        zoomFn = function(d) {
-          var interpolaters = arcTweens(d);
+        zoomFn = rtnObj.zoom = function(id) {
+          var d = d3.select("#" + id).data()[0],
+            interpolaters = arcTweens(d);
 
           dataLayer
             .transition(transition)
@@ -163,7 +164,9 @@ this.sunburstChart = function(svg, settings, data) {
           parent.append("path")
             .attr("id", arcId)
             .attr("d", arc)
-            .on("click", zoomFn);
+            .on("click", function() {
+              zoomFn(this.parentNode.id);
+            });
 
           parent.append("text")
             .attr("dy", 15)

@@ -53,7 +53,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   settings = {
     aspectRatio: 16 / 12,
     getId: function(d) {
-      return nocIdPrefix + d.data.nocId;
+      return nocIdPrefix + (d.data.nocId ? d.data.nocId : allNoc);
     },
     getValue: function(d) {
       if (d.children === undefined)
@@ -121,7 +121,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         children: bindData(nocData)
       };
 
-    sunburstChart(chart, settings, data);
+    chartObj = sunburstChart(chart, settings, data);
     showValues();
   },
   showValues = function(sett) {
@@ -140,8 +140,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   onSelect = function(e) {
     switch(e.target.id){
     case "noc":
-      state.noc = e.target.value !== allNoc ? getNocId(e.target.value) : allNoc;
-      break;
+      chartObj.zoom(nocIdPrefix + e.target.value);
+      return;
     case "sgc":
       state.sgc = e.target.value;
       break;
@@ -201,7 +201,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       hoverTimeout = setTimeout(hoverOut, 100);
     }
   },
-  nocData, canadaOccupationsData, sgcData, hoverTimeout;
+  nocData, canadaOccupationsData, sgcData, hoverTimeout, chartObj;
 
 i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
   d3.queue()
