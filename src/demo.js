@@ -82,6 +82,10 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         return rootNocClassPrefix + rootId + " " + nocLvlPrefix + level;
 
       return "root";
+    },
+    zoomCallback(id) {
+      state.noc = id.replace(nocIdPrefix, "");
+      showValues();
     }
   },
   getNocId = function(nocElmId) {
@@ -121,6 +125,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         children: bindData(nocData)
       };
 
+    settings.zoom = nocIdPrefix + state.noc;
     chartObj = sunburstChart(chart, settings, data);
     showValues();
   },
@@ -140,7 +145,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   onSelect = function(e) {
     switch(e.target.id){
     case "noc":
-      chartObj.zoom(nocIdPrefix + e.target.value);
+      state.noc = e.target.value;
+      chartObj.zoom(nocIdPrefix + state.noc);
       return;
     case "sgc":
       state.sgc = e.target.value;

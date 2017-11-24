@@ -21,7 +21,7 @@ this.sunburstChart = function(svg, settings, data) {
     chartInner = svg.select("g"),
     dataLayer = chartInner.select(".data"),
     elipsis = "...",
-    arcPadding = 5,
+    arcTextPadding = 5,
     transition = d3.transition()
       .duration(1000),
     draw = function() {
@@ -46,8 +46,9 @@ this.sunburstChart = function(svg, settings, data) {
           .innerRadius(function(d) { return y(d.y0); })
           .outerRadius(function(d) { return y(d.y1); }),
         valueFn = sett.getValue ? sett.getValue.bind(sett) : null,
-        arcsIdFn = sett.getId ? sett.getId.bind(sett) : null,
+        idFn = sett.getId ? sett.getId.bind(sett) : null,
         textFn = sett.getText ? sett.getText.bind(sett) : null,
+        zoomCallback = sett.zoomCallback ? sett.zoomCallback.bind(sett) : null,
         classFn = function(d,i){
           var cl = "arc arc" + (i + 1);
 
@@ -58,14 +59,12 @@ this.sunburstChart = function(svg, settings, data) {
           return cl;
         },
         arcTweens = function(d) {
-          var xd = d3.interpolate(x.domain(), [d.x0, d.x1]),
-            yr = d3.interpolate(y.range(), [d.y0, outerRadius]);
+          var xd = d3.interpolate(x.domain(), [d.x0, d.x1]);
 
           return {
             domain: function() {
               return function(t) {
                 x.domain(xd(t));
-                y.range(yr(t));
               };
             },
             arcs: function(d) {
@@ -95,6 +94,10 @@ this.sunburstChart = function(svg, settings, data) {
 
               text.text(null);
             });
+
+          if (zoomCallback) {
+            zoomCallback(id);
+          }
         },
         getTextLength = function(text) {
           var textObj = d3.select(this),
@@ -117,7 +120,7 @@ this.sunburstChart = function(svg, settings, data) {
 
           angle = (getEndAngle(d) - getStartAngle(d)) / (2 * Math.PI);
           radius = y((d.y1 - d.y0) * 2 / 3 + d.y0);
-          arcLength = (angle * 2 * Math.PI * radius) - arcPadding;
+          arcLength = (angle * 2 * Math.PI * radius) - (arcTextPadding * 2);
           elipsisLength = getTextLength.call(obj, elipsis);
           textLength = getTextLength.call(obj, text);
           elipsisRatio = elipsisLength / arcLength,
@@ -137,9 +140,22 @@ this.sunburstChart = function(svg, settings, data) {
         },
         partition = d3.partition()
           .padding(sett.padding),
-        root = d3.hierarchy(filteredData)
-          .sum(valueFn),
-        arcs;
+        root = partition(
+          d3.hierarchy(filteredData)
+            .sum(valueFn)
+          ),
+        arcs, children, c, d;
+
+      if (sett.zoom) {
+        children = root.descendants();
+        for (c = 0; c < children.length; c++) {
+          d = children[c];
+          if (idFn(d) === sett.zoom) {
+            x.domain([d.x0, d.x1]);
+            break;
+          }
+        }
+      }
 
       if (dataLayer.empty()) {
         dataLayer = chartInner.append("g")
@@ -148,12 +164,12 @@ this.sunburstChart = function(svg, settings, data) {
       }
       arcs = dataLayer
         .selectAll(".arc")
-        .data(partition(root).descendants(), arcsIdFn);
+        .data(root.descendants(), idFn);
 
       arcs
         .enter()
         .append("g")
-        .attr("id", arcsIdFn)
+        .attr("id", idFn)
         .attr("class", classFn)
         .each(function(d, index) {
           var parent = d3.select(this),
@@ -170,7 +186,7 @@ this.sunburstChart = function(svg, settings, data) {
 
           parent.append("text")
             .attr("dy", 15)
-            .attr("dx", arcPadding)
+            .attr("dx", arcTextPadding)
             .attr("aria-hidden", "true")
             .append("textPath")
               .attr("xlink:href", function() {
