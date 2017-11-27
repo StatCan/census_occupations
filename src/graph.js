@@ -22,8 +22,10 @@ this.sunburstChart = function(svg, settings, data) {
     dataLayer = chartInner.select(".data"),
     elipsis = "...",
     arcTextPadding = 5,
-    transition = d3.transition()
-      .duration(1000),
+    getTransition = function() {
+      return d3.transition()
+        .duration(1000);
+    },
     draw = function() {
       var sett = this.settings,
         filteredData = (sett.filterData && typeof sett.filterData === "function") ?
@@ -76,67 +78,67 @@ this.sunburstChart = function(svg, settings, data) {
         },
         zoomFn = rtnObj.zoom = function(id) {
           var d = d3.select("#" + id).data()[0],
-            interpolaters = arcTweens(d);
+            textSelection = dataLayer.selectAll("textPath"),
+            t = getTransition(),
+            interpolaters = arcTweens(d),
+            g;
 
           dataLayer
-            .transition(transition)
+            .transition(t)
             .tween("scale", interpolaters.domain)
-            .selectAll("g")
-            .each(function() {
-              var parent = d3.select(this),
-                text = parent.select("textPath");
-              parent.select("path")
-                .transition(transition)
-                .attrTween("d", interpolaters.arcs)
-                .on("end", function() {
-                  text.text(truncateText);
-                });
-
-              text.text(null);
+            .on("end", function() {
+              textSelection.text(truncateText);
             });
+
+          textSelection.text(null);
+
+          g = dataLayer.selectAll(".arc")
+            .transition(t);
+
+          g.select("path")
+          .attrTween("d", interpolaters.arcs);
+
 
           if (zoomCallback) {
             zoomCallback(id);
           }
         },
-        getTextLength = function(text) {
-          var textObj = d3.select(this),
-            oldText = textObj.text(),
-            value;
 
-          textObj.text(text);
-          value = this.getSubStringLength(0, text.length);
-          textObj.text(oldText);
-
-          return value;
-        },
         truncateText = function(d, i, selection) {
           var obj = selection[0],
+            textObj = d3.select(obj),
             text = textFn.apply(this, arguments),
-            angle, radius, arcLength, elipsisLength, textLength, elipsisRatio, ratio;
-
-          if (text.length < 1)
-            return text;
+            angle, radius, arcLength, elipsisLength, textLength, ratio;
 
           angle = (getEndAngle(d) - getStartAngle(d)) / (2 * Math.PI);
           radius = y((d.y1 - d.y0) * 2 / 3 + d.y0);
           arcLength = (angle * 2 * Math.PI * radius) - (arcTextPadding * 2);
-          elipsisLength = getTextLength.call(obj, elipsis);
-          textLength = getTextLength.call(obj, text);
-          elipsisRatio = elipsisLength / arcLength,
-          ratio = textLength / arcLength;
 
-          if (elipsisRatio > 0.5 || arcLength <= 0) {
-            text = "";
-          } else if (ratio > 1) {
-            text = text.substr(0, text.length * 1 / ratio) ;
-            while (getTextLength.call(obj, text + elipsis) > arcLength){
-              text = text.substr(0,text.length - 1);
-            }
-            text += elipsis;
+          if (text.length < 1 || arcLength <= 0)
+            return null;
+
+          textObj.text(elipsis);
+          elipsisLength = obj.getComputedTextLength();
+          textObj.text(text);
+          textLength = obj.getComputedTextLength();
+          textObj.text(null);
+
+          if (textLength < arcLength)
+            return text;
+
+          if (elipsisLength > arcLength)
+            return null;
+
+          if (elipsisLength < arcLength && elipsisLength * 1.5 > arcLength)
+            return elipsis;
+
+          ratio = textLength / arcLength;
+          text = text.substr(0, text.length * 1 / ratio);
+          while (textObj.text(text + elipsis), obj.getComputedTextLength() > arcLength){
+            text = text.substr(0,text.length - 1);
           }
 
-          return text;
+          return text + elipsis;
         },
         partition = d3.partition()
           .padding(sett.padding),
