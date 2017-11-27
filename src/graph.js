@@ -108,7 +108,7 @@ this.sunburstChart = function(svg, settings, data) {
           var obj = selection[0],
             textObj = d3.select(obj),
             text = textFn.apply(this, arguments),
-            angle, radius, arcLength, elipsisLength, textLength, ratio;
+            angle, radius, arcLength, elipsisLength, textLength, pos, ratio;
 
           angle = (getEndAngle(d) - getStartAngle(d)) / (2 * Math.PI);
           radius = y((d.y1 - d.y0) * 2 / 3 + d.y0);
@@ -121,7 +121,6 @@ this.sunburstChart = function(svg, settings, data) {
           elipsisLength = obj.getComputedTextLength();
           textObj.text(text);
           textLength = obj.getComputedTextLength();
-          textObj.text(null);
 
           if (textLength < arcLength)
             return text;
@@ -133,11 +132,11 @@ this.sunburstChart = function(svg, settings, data) {
             return elipsis;
 
           ratio = textLength / arcLength;
-          text = text.substr(0, text.length * 1 / ratio);
-          while (textObj.text(text + elipsis), obj.getComputedTextLength() > arcLength){
-            text = text.substr(0,text.length - 1);
+          pos = Math.ceil(text.length * 1 / ratio);
+          while (obj.getSubStringLength(0, pos) + elipsisLength > arcLength){
+            pos--;
           }
-          return text + elipsis;
+          return text.substr(0, pos) + elipsis;
         },
         partition = d3.partition()
           .padding(sett.padding),
