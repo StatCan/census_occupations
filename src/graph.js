@@ -106,37 +106,45 @@ this.sunburstChart = function(svg, settings, data) {
 
         truncateText = function(d, i, selection) {
           var obj = selection[0],
-            textObj = d3.select(obj),
+            textObj = d3.select(obj.parentNode).append("tspan"),
             text = textFn.apply(this, arguments),
-            angle, radius, arcLength, elipsisLength, textLength, pos, ratio;
+            getText = function() {
+              var angle, radius, arcLength, elipsisLength, textLength, pos, ratio;
 
-          angle = (getEndAngle(d) - getStartAngle(d)) / (2 * Math.PI);
-          radius = y((d.y1 - d.y0) * 2 / 3 + d.y0);
-          arcLength = (angle * 2 * Math.PI * radius) - (arcTextPadding * 2);
+              angle = (getEndAngle(d) - getStartAngle(d)) / (2 * Math.PI);
+              radius = y((d.y1 - d.y0) * 2 / 3 + d.y0);
+              arcLength = (angle * 2 * Math.PI * radius) - (arcTextPadding * 2);
 
-          if (text.length < 1 || arcLength <= 0)
-            return null;
+              if (text.length < 1 || arcLength <= 0)
+                return null;
 
-          textObj.text(elipsis);
-          elipsisLength = obj.getComputedTextLength();
-          textObj.text(text);
-          textLength = obj.getComputedTextLength();
 
-          if (textLength < arcLength)
-            return text;
+              textObj.text(elipsis);
+              elipsisLength = textObj.node().getComputedTextLength();
+              textObj.text(text);
+              textLength = textObj.node().getComputedTextLength();
 
-          if (elipsisLength > arcLength)
-            return null;
+              if (textLength < arcLength)
+                return text;
 
-          if (elipsisLength < arcLength && elipsisLength * 3 > arcLength)
-            return elipsis;
+              if (elipsisLength > arcLength)
+                return null;
 
-          ratio = textLength / arcLength;
-          pos = Math.ceil(text.length * 1 / ratio);
-          while (obj.getSubStringLength(0, pos) + elipsisLength > arcLength){
-            pos--;
-          }
-          return text.substr(0, pos) + elipsis;
+              if (elipsisLength < arcLength && elipsisLength * 3 > arcLength)
+                return elipsis;
+
+              ratio = textLength / arcLength;
+              pos = Math.ceil(text.length * 1 / ratio);
+              while (textObj.node().getSubStringLength(0, pos) + elipsisLength > arcLength){
+                pos--;
+              }
+              return text.substr(0, pos) + elipsis;
+            },
+            rtn = getText();
+
+          textObj.remove();
+
+          return rtn;
         },
         partition = d3.partition()
           .padding(sett.padding),
