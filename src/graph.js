@@ -85,18 +85,18 @@ this.sunburstChart = function(svg, settings, data) {
 
           dataLayer
             .transition(t)
-            .tween("scale", interpolaters.domain)
-            .on("end", function() {
-              textSelection.text(truncateText);
-            });
+            .tween("scale", interpolaters.domain);
 
           textSelection.text(null);
 
           g = dataLayer.selectAll(".arc")
-            .transition(t);
+            .transition(t)
+            .on("end", function() {
+              d3.select(this).select("textPath").text(truncateText);
+            });
 
           g.select("path")
-          .attrTween("d", interpolaters.arcs);
+            .attrTween("d", interpolaters.arcs);
 
 
           if (zoomCallback) {
@@ -129,7 +129,7 @@ this.sunburstChart = function(svg, settings, data) {
           if (elipsisLength > arcLength)
             return null;
 
-          if (elipsisLength < arcLength && elipsisLength * 1.5 > arcLength)
+          if (elipsisLength < arcLength && elipsisLength * 3 > arcLength)
             return elipsis;
 
           ratio = textLength / arcLength;
@@ -137,7 +137,6 @@ this.sunburstChart = function(svg, settings, data) {
           while (textObj.text(text + elipsis), obj.getComputedTextLength() > arcLength){
             text = text.substr(0,text.length - 1);
           }
-
           return text + elipsis;
         },
         partition = d3.partition()
