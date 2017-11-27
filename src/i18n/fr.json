@@ -3,7 +3,8 @@
 		"census_occupations": {
 			"average_inc": "Revenu moyen",
 			"num_ppl": "Nombre de personnes",
-			"pct_ppl": "Pourcentage de personnes"
+			"pct_ppl": "Pourcentage de personnes",
+			"X": "Total – Profession"
 		}
 	}
 }

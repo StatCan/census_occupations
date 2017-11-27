@@ -12,7 +12,8 @@
 	pointer-events: none;
 }
 
-.data .info {
+.data .info,
+.data .info-title {
 	text-anchor: middle;
 }
 

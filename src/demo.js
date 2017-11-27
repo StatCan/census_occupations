@@ -51,6 +51,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     }
   },
   settings = {
+    margin: {
+      top: 50
+    },
     aspectRatio: 16 / 12,
     getId: function(d) {
       return nocIdPrefix + (d.data.nocId ? d.data.nocId : allNoc);
@@ -86,7 +89,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     zoomCallback(id) {
       state.noc = id.replace(nocIdPrefix, "");
       showValues();
-    }
+    },
+    width: 600
   },
   getNocId = function(nocElmId) {
     return nocElmId.replace(nocIdPrefix, "");
@@ -131,12 +135,26 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   },
   showValues = function(sett) {
     var info = chart.select(".info"),
-      workers, medianIncome, percent;
+      titleObj = chart.select(".info-title"),
+      title, mid, workers, medianIncome, percent;
 
     sett = sett || state;
     workers = canadaOccupationsData.getDataPoint(sett);
     medianIncome = canadaOccupationsData.getDataPoint($.extend({}, sett, {property: medIncProp}));
     percent = workers / canadaOccupationsData.getDataPoint($.extend({}, sett, {noc: allNoc}));
+
+    title = i18next.t(sett.noc, {ns: [nocNs, rootNs]});
+    titleObj.text(title);
+
+    if (titleObj.node().getSubStringLength(0, title.length) > settings.width * 3 /4) {
+      titleObj.text(null);
+      mid =  title.indexOf(" ", Math.ceil(title.length / 2));
+      titleObj.append("tspan").text(title.slice(0, mid));
+      titleObj.append("tspan")
+        .attr("x", 300)
+        .attr("dy", "1.2em")
+        .text(title.slice(mid));
+    }
 
     info.select(".income").text(salaryFormatter.format(medianIncome));
     info.select(".num").text(workersFormatter.format(workers));
@@ -219,9 +237,14 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
       nocData = canada_noc(noc);
       canadaOccupationsData = require("canada_census_data")(occupations);
 
+      chart.append("text")
+        .attr("class", "info-title")
+        .attr("x", settings.width / 2)
+        .attr("dy", "1em");
+
       var info = chart.append("text")
-        .attr("x", 300)
-        .attr("y", 180)
+        .attr("x", settings.width / 2)
+        .attr("y", 200)
         .attr("class", "info");
 
       info.append("tspan")
@@ -229,32 +252,32 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
         .text(i18next.t("average_inc", {ns: rootNs}));
 
       info.append("tspan")
-        .attr("x", 300)
-        .attr("y", 180)
+        .attr("x", settings.width / 2)
+        .attr("y", 200)
         .attr("dy", "1.4em")
         .attr("class", "income value");
 
       info.append("tspan")
-        .attr("x", 300)
-        .attr("y", 230)
+        .attr("x", settings.width / 2)
+        .attr("y", 250)
         .attr("class", "h6")
         .text(i18next.t("num_ppl", {ns: rootNs}));
 
       info.append("tspan")
-        .attr("x", 300)
-        .attr("y", 230)
+        .attr("x", settings.width / 2)
+        .attr("y", 250)
         .attr("dy", "1.4em")
         .attr("class", "num value");
 
       info.append("tspan")
-        .attr("x", 300)
-        .attr("y", 280)
+        .attr("x", settings.width / 2)
+        .attr("y", 300)
         .attr("class", "h6")
         .text(i18next.t("num_ppl", {ns: rootNs}));
 
       info.append("tspan")
-        .attr("x", 300)
-        .attr("y", 280)
+        .attr("x", settings.width / 2)
+        .attr("y", 300)
         .attr("dy", "1.4em")
         .attr("class", "pt value");
 
