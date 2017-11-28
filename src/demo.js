@@ -239,10 +239,12 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
 
       chart.append("text")
         .attr("class", "info-title")
+        .attr("aria-hidden", "true")
         .attr("x", settings.width / 2)
         .attr("dy", "1em");
 
       var info = chart.append("text")
+        .attr("aria-hidden", "true")
         .attr("x", settings.width / 2)
         .attr("y", 200)
         .attr("class", "info");
