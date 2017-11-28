@@ -88,6 +88,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     },
     zoomCallback: function(id) {
       state.noc = id.replace(nocIdPrefix, "");
+      document.getElementById("noc").value = state.noc;
       showValues();
     },
     width: 600
