@@ -16,6 +16,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   nocLvlPrefix = "lvl",
   workersProp = "count_elf_fyft",
   medIncProp = "med_earnings",
+  hoverTopClass = "hover",
+  selectedCl = "selected",
   state = {
     sgc: canadaSgc,
     hcdd: 1,
@@ -87,8 +89,22 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       return "root";
     },
     zoomCallback: function(id) {
+      var up;
       state.noc = id.replace(nocIdPrefix, "");
       document.getElementById("noc").value = state.noc;
+
+      d3.selectAll("." + selectedCl).classed(selectedCl, false);
+      d3.select("." + hoverTopClass).classed(hoverTopClass, false);
+
+      up = nocData.getNoc(state.noc);
+
+      if (up !== undefined && up.id.length === 4)
+        up = up.parent;
+
+      while (up !== undefined) {
+        d3.select("#" + nocIdPrefix + up.id).classed(selectedCl, true);
+        up = up.parent;
+      }
       showValues();
     },
     width: 600
@@ -177,8 +193,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     showData();
   },
   onHover = function(e) {
-    var hoverTopClass = "hover",
-      hoverClass = "hovering",
+    var hoverClass = "hovering",
       getNocSelector = function(nocId) {
         return "#" + nocIdPrefix + nocId;
       },

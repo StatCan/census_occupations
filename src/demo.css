@@ -7,8 +7,7 @@
 
 .data .arc text {
 	fill: #fff;
-	font-size: 60%;
-	font-weight: bold;
+	font-size: 62%;
 	pointer-events: none;
 }
 
@@ -17,8 +16,25 @@
 	text-anchor: middle;
 }
 
+.data .info .h6 {
+	font-size: 70%;
+	fill: #2b3a68;
+}
+
 .data .info .value {
-	font-size: 80%;
+	font-size: 70%;
+}
+
+.arc path {
+	transition: opacity 1s;
+}
+
+.arc.selected path {
+	opacity: .5;
+}
+
+.arc.selected text {
+	fill: #000;
 }
 
 .hover .arc:not(.hovering) {

@@ -6,7 +6,7 @@ var defaults = {
     bottom: 2,
     left: 2
   },
-  innerRadius: 20,
+  innerRadius: 60,
   padding: 0,
   aspectRatio: 16 / 9,
   width: 600
@@ -34,7 +34,7 @@ this.sunburstChart = function(svg, settings, data) {
         innerRadius = sett.innerRadius,
         x = rtnObj.x = d3.scaleLinear()
           .range([0, 2 * Math.PI]),
-        y = rtnObj.y = d3.scaleSqrt()
+        y = rtnObj.y = d3.scaleLinear()
           .range([innerRadius, outerRadius]),
         getStartAngle = function(d) {
           return Math.max(0, Math.min(2 * Math.PI, x(d.x0)));
