@@ -1,6 +1,6 @@
 .data .arc path {
 	pointer-events: all;
-	stroke-width: 0.15%;
+	stroke-width: 0.25%;
 	stroke: #fff;
 	stroke-opacity: .1
 }
@@ -78,51 +78,51 @@
 }
 
 .rootnoc_3.lvl1 {
-	fill: #38808a;
-}
-
-.rootnoc_3.lvl2 {
-	fill: #2f6a72;
-}
-
-.rootnoc_3.lvl3 {
-	fill: #245056;
-}
-
-.rootnoc_3.lvl4 {
-	fill: #1c3e43;
-}
-
-.rootnoc_4.lvl1 {
 	fill: #bc4e8c;
 }
 
-.rootnoc_4.lvl2 {
+.rootnoc_3.lvl2 {
 	fill: #963e70;
 }
 
-.rootnoc_4.lvl3 {
+.rootnoc_3.lvl3 {
 	fill: #753057;
 }
 
-.rootnoc_4.lvl4 {
+.rootnoc_3.lvl4 {
 	fill: #5e2646;
 }
 
-.rootnoc_5.lvl1 {
+.rootnoc_4.lvl1 {
 	fill: #CC0047;
 }
 
-.rootnoc_5.lvl2 {
+.rootnoc_4.lvl2 {
 	fill: #a30039;
 }
 
-.rootnoc_5.lvl3 {
+.rootnoc_4.lvl3 {
 	fill: #7f002c;
 }
 
-.rootnoc_5.lvl4 {
+.rootnoc_4.lvl4 {
 	fill: #610022;
+}
+
+.rootnoc_5.lvl1 {
+	fill: #38808a;
+}
+
+.rootnoc_5.lvl2 {
+	fill: #2f6a72;
+}
+
+.rootnoc_5.lvl3 {
+	fill: #245056;
+}
+
+.rootnoc_5.lvl4 {
+	fill: #1c3e43;
 }
 
 .rootnoc_6.lvl1 {
@@ -158,33 +158,33 @@
 }
 
 .rootnoc_8.lvl1 {
-	fill: #6D4E93;
-}
-
-.rootnoc_8.lvl2 {
-	fill: #5d457b;
-}
-
-.rootnoc_8.lvl3 {
-	fill: #4c3864;
-}
-
-.rootnoc_8.lvl4 {
-	fill: #3b2d4f;
-}
-
-.rootnoc_9.lvl1 {
 	fill: #7f617e;
 }
 
-.rootnoc_9.lvl2 {
+.rootnoc_8.lvl2 {
 	fill: #684f67;
 }
 
-.rootnoc_9.lvl3 {
+.rootnoc_8.lvl3 {
 	fill: #523f51;
 }
 
-.rootnoc_9.lvl4 {
+.rootnoc_8.lvl4 {
 	fill: #433342;
+}
+
+.rootnoc_9.lvl1 {
+	fill: #6D4E93;
+}
+
+.rootnoc_9.lvl2 {
+	fill: #5d457b;
+}
+
+.rootnoc_9.lvl3 {
+	fill: #4c3864;
+}
+
+.rootnoc_9.lvl4 {
+	fill: #3b2d4f;
 }
