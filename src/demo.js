@@ -67,7 +67,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     },
     getText: function(d) {
       if (d.value > 0) {
-        return i18next.t(d.data.nocId, {ns: nocNs});
+        return i18next.t(d.data.nocId, {ns: nocNs}).split("").join("\u2009");
       }
       return "";
     },

@@ -151,7 +151,7 @@ this.sunburstChart = function(svg, settings, data) {
         root = partition(
           d3.hierarchy(filteredData)
             .sum(valueFn)
-          ),
+        ),
         arcs, children, c, d;
 
       if (sett.zoom) {
