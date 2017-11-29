@@ -74,19 +74,36 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     getClass: function(d) {
       var up = d,
         level = 1,
-        rootId;
+        zoomLevel = 1,
+        rootId,
+        cl = "",
+        zoomNoc;
 
       while (up.parent !== undefined && up.parent !== null && up.parent.data.nocId !== undefined) {
         up = up.parent;
         level++;
       }
-
       rootId = up.data.nocId;
 
-      if (rootId !== undefined)
-        return rootNocClassPrefix + rootId + " " + nocLvlPrefix + level;
+      if (rootId !== undefined) {
+        cl += rootNocClassPrefix + rootId + " " + nocLvlPrefix + level;
 
-      return "root";
+        if (this.zoom !== nocIdPrefix + allNoc) {
+          zoomNoc = nocData.getNoc(this.zoom.replace(nocIdPrefix, ""));
+          up = zoomNoc;
+          while (up.parent !== undefined && up.parent !== null && up.parent.id !== undefined) {
+            up = up.parent;
+            zoomLevel++;
+          }
+
+          if (rootId === up.id && level < 4 && level <= zoomLevel)
+            cl += " " + selectedCl;
+        }
+      } else {
+        cl += "root";
+      }
+
+      return cl;
     },
     zoomCallback: function(id) {
       var up;
