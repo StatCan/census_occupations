@@ -23,7 +23,7 @@ this.sunburstChart = function(svg, settings, data) {
     elipsis = "...",
     arcTextPadding = 5,
     getTransition = function(transition) {
-      var t = transition || d3.transition;
+      var t = transition || d3.transition();
       return t.duration(1000);
     },
     draw = function() {
