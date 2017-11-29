@@ -1,4 +1,5 @@
 .data .arc path {
+	cursor: pointer;
 	pointer-events: all;
 	stroke-width: 0.25%;
 	stroke: #fff;
