@@ -22,9 +22,9 @@ this.sunburstChart = function(svg, settings, data) {
     dataLayer = chartInner.select(".data"),
     elipsis = "...",
     arcTextPadding = 5,
-    getTransition = function() {
-      return d3.transition()
-        .duration(1000);
+    getTransition = function(transition) {
+      var t = transition || d3.transition;
+      return t.duration(1000);
     },
     draw = function() {
       var sett = this.settings,
@@ -42,15 +42,25 @@ this.sunburstChart = function(svg, settings, data) {
         getEndAngle = function(d) {
           return Math.max(0, Math.min(2 * Math.PI, x(d.x1)));
         },
+        getInnerRadius = function(d) {
+          return y(d.y0);
+        },
+        getOuterRadius = function(d) {
+          return y(d.y1);
+        },
         arc = d3.arc()
           .startAngle(getStartAngle)
           .endAngle(getEndAngle)
-          .innerRadius(function(d) { return y(d.y0); })
-          .outerRadius(function(d) { return y(d.y1); }),
+          .innerRadius(getInnerRadius)
+          .outerRadius(getOuterRadius),
+        arcAnim = d3.arc(),
         valueFn = sett.getValue ? sett.getValue.bind(sett) : null,
         idFn = sett.getId ? sett.getId.bind(sett) : null,
         textFn = sett.getText ? sett.getText.bind(sett) : null,
         zoomCallback = sett.zoomCallback ? sett.zoomCallback.bind(sett) : null,
+        textRedrawFn = function() {
+          d3.select(this).select("textPath").text(truncateText);
+        },
         classFn = function(d,i){
           var cl = "arc arc" + (i + 1);
 
@@ -60,7 +70,7 @@ this.sunburstChart = function(svg, settings, data) {
 
           return cl;
         },
-        arcTweens = function(d) {
+        zoomArcTweens = function(d) {
           var xd = d3.interpolate(x.domain(), [d.x0, d.x1]);
 
           return {
@@ -76,11 +86,31 @@ this.sunburstChart = function(svg, settings, data) {
             }
           };
         },
+        arcTween = function(d) {
+          var oldD = this.parentNode._current,
+            i = d3.interpolateObject({
+              startAngle: getStartAngle(oldD),
+              endAngle: getEndAngle(oldD),
+              innerRadius: getInnerRadius(oldD),
+              outerRadius: getOuterRadius(oldD)
+            },{
+              startAngle: getStartAngle(d),
+              endAngle: getEndAngle(d),
+              innerRadius: getInnerRadius(d),
+              outerRadius: getOuterRadius(d)
+            });
+
+          this.parentNode._current = d;
+
+          return function(t) {
+            return arcAnim(i(t));
+          };
+        },
         zoomFn = rtnObj.zoom = function(id) {
           var d = d3.select("#" + id).data()[0],
             textSelection = dataLayer.selectAll("textPath"),
             t = getTransition(),
-            interpolaters = arcTweens(d),
+            interpolaters = zoomArcTweens(d),
             g;
 
           dataLayer
@@ -91,9 +121,7 @@ this.sunburstChart = function(svg, settings, data) {
 
           g = dataLayer.selectAll(".arc")
             .transition(t)
-            .on("end", function() {
-              d3.select(this).select("textPath").text(truncateText);
-            });
+            .on("end", textRedrawFn);
 
           g.select("path")
             .attrTween("d", interpolaters.arcs);
@@ -185,6 +213,8 @@ this.sunburstChart = function(svg, settings, data) {
               return svg.attr("id") + "arc" + index;
             };
 
+          this._current = d;
+
           parent.append("path")
             .attr("id", arcId)
             .attr("d", arc)
@@ -203,17 +233,21 @@ this.sunburstChart = function(svg, settings, data) {
               .text(truncateText);
         });
 
-      arcs
-        .attr("class", classFn)
+      arcs.attr("class", classFn)
+        .transition()
         .each(function() {
-          var parent = d3.select(this);
-
-          parent.select("path")
-            .attr("d", arc);
+          var parent = getTransition(d3.select(this).transition());
 
           parent.select("text textPath")
-            .text(truncateText);
+            .text(null);
+
+          parent
+            .select("path")
+            .attrTween("d", arcTween);
+
+          parent.on("end", textRedrawFn);
         });
+
     },
     rtnObj, process;
 
