@@ -285,7 +285,7 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
       var info = chart.append("text")
         .attr("aria-hidden", "true")
         .attr("x", settings.width / 2)
-        .attr("y", 200)
+        .attr("y", 195)
         .attr("class", "info");
 
       info.append("tspan")
@@ -294,31 +294,31 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
 
       info.append("tspan")
         .attr("x", settings.width / 2)
-        .attr("y", 200)
+        .attr("y", 195)
         .attr("dy", "1.4em")
         .attr("class", "income value");
 
       info.append("tspan")
         .attr("x", settings.width / 2)
-        .attr("y", 250)
+        .attr("y", 245)
         .attr("class", "h6")
         .text(i18next.t("num_ppl", {ns: rootNs}));
 
       info.append("tspan")
         .attr("x", settings.width / 2)
-        .attr("y", 250)
+        .attr("y", 245)
         .attr("dy", "1.4em")
         .attr("class", "num value");
 
       info.append("tspan")
         .attr("x", settings.width / 2)
-        .attr("y", 300)
+        .attr("y", 295)
         .attr("class", "h6")
         .text(i18next.t("num_ppl", {ns: rootNs}));
 
       info.append("tspan")
         .attr("x", settings.width / 2)
-        .attr("y", 300)
+        .attr("y", 295)
         .attr("dy", "1.4em")
         .attr("class", "pt value");
 
