@@ -53,10 +53,11 @@ this.sunburstChart = function(svg, settings, data) {
           .endAngle(getEndAngle)
           .innerRadius(getInnerRadius)
           .outerRadius(getOuterRadius)
-          .padAngle(sett.padding !== 0 ? function() {
+          .padAngle(sett.padding !== 0 ? function(d) {
             var domain = x.domain(),
-              zoom = domain[1] - domain[0] / 1;
-            return sett.padding * zoom;
+              zoom = domain[1] - domain[0] / 1,
+              padding = typeof sett.padding === "function" ? sett.padding.call(sett, d) : sett.padding;
+            return padding * zoom;
           } : null),
         valueFn = sett.getValue ? sett.getValue.bind(sett) : null,
         idFn = sett.getId ? sett.getId.bind(sett) : null,

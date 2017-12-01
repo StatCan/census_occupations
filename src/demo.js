@@ -56,6 +56,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     margin: {
       top: 50
     },
+    padding: 0,
     aspectRatio: 16 / 12,
     getId: function(d) {
       return nocIdPrefix + (d.data.nocId ? d.data.nocId : allNoc);
