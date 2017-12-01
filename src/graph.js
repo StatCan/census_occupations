@@ -159,11 +159,8 @@ this.sunburstChart = function(svg, settings, data) {
               if (textLength < arcLength)
                 return text;
 
-              if (elipsisLength > arcLength)
+              if (elipsisLength * 3 > arcLength)
                 return null;
-
-              if (elipsisLength < arcLength && elipsisLength * 3 > arcLength)
-                return elipsis;
 
               ratio = textLength / arcLength;
               pos = Math.ceil(text.length * 1 / ratio);
