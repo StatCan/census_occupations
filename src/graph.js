@@ -37,10 +37,10 @@ this.sunburstChart = function(svg, settings, data) {
         y = rtnObj.y = d3.scaleLinear()
           .range([innerRadius, outerRadius]),
         getStartAngle = function(d) {
-          return Math.max(0, Math.min(2 * Math.PI, x(d.x0)));
+          return Math.max(0, Math.min(2 * Math.PI, x(d.x0))) - (Math.PI / 2);
         },
         getEndAngle = function(d) {
-          return Math.max(0, Math.min(2 * Math.PI, x(d.x1)));
+          return Math.max(0, Math.min(2 * Math.PI, x(d.x1))) - (Math.PI / 2);
         },
         getInnerRadius = function(d) {
           return y(d.y0);
@@ -53,7 +53,6 @@ this.sunburstChart = function(svg, settings, data) {
           .endAngle(getEndAngle)
           .innerRadius(getInnerRadius)
           .outerRadius(getOuterRadius),
-        arcAnim = d3.arc(),
         valueFn = sett.getValue ? sett.getValue.bind(sett) : null,
         idFn = sett.getId ? sett.getId.bind(sett) : null,
         textFn = sett.getText ? sett.getText.bind(sett) : null,
@@ -70,61 +69,61 @@ this.sunburstChart = function(svg, settings, data) {
 
           return cl;
         },
-        zoomArcTweens = function(d) {
-          var xd = d3.interpolate(x.domain(), [d.x0, d.x1]);
+        domainInterpolator = function(d) {
+          var dl = dataLayer.node(),
+            oldDomain = x.domain().slice(),
+            newDomain = [d.x0, d.x1].slice(),
+            xd = d3.interpolateArray(oldDomain, newDomain);
 
-          return {
-            domain: function() {
-              return function(t) {
-                x.domain(xd(t));
-              };
-            },
-            arcs: function(d) {
-              return function() {
-                return arc(d);
-              };
-            }
+          dl._domain = newDomain;
+
+          return function(){
+            return function(t) {
+              x.domain(xd(t));
+            };
+          };
+        },
+        zoomArcInterpolator = function(d) {
+          return function() {
+            return arc(d);
           };
         },
         arcTween = function(d) {
           var oldD = this.parentNode._current,
-            i = d3.interpolateObject({
-              startAngle: getStartAngle(oldD),
-              endAngle: getEndAngle(oldD),
-              innerRadius: getInnerRadius(oldD),
-              outerRadius: getOuterRadius(oldD)
-            },{
-              startAngle: getStartAngle(d),
-              endAngle: getEndAngle(d),
-              innerRadius: getInnerRadius(d),
-              outerRadius: getOuterRadius(d)
-            });
+            newD = {
+              x0: d.x0,
+              x1: d.x1,
+              y0: d.y0,
+              y1: d.y1
+            },
+            i;
 
-          this.parentNode._current = d;
+          i = d3.interpolate(oldD, newD);
+
+          this.parentNode._current = newD;
 
           return function(t) {
-            return arcAnim(i(t));
+            return arc(i(t));
           };
+
         },
         zoomFn = rtnObj.zoom = function(id) {
           var d = d3.select("#" + id).data()[0],
             textSelection = dataLayer.selectAll("textPath"),
-            t = getTransition(),
-            interpolaters = zoomArcTweens(d),
             g;
 
           dataLayer
-            .transition(t)
-            .tween("scale", interpolaters.domain);
+            .transition(getTransition())
+            .tween("scale", domainInterpolator(d));
 
           textSelection.text(null);
 
           g = dataLayer.selectAll(".arc")
-            .transition(t)
+            .transition(getTransition())
             .on("end", textRedrawFn);
 
           g.select("path")
-            .attrTween("d", interpolaters.arcs);
+            .attrTween("d", zoomArcInterpolator);
 
 
           if (zoomCallback) {
@@ -180,30 +179,45 @@ this.sunburstChart = function(svg, settings, data) {
           d3.hierarchy(filteredData)
             .sum(valueFn)
         ),
-        arcs, children, c, d;
-
-      if (sett.zoom) {
-        children = root.descendants();
-        for (c = 0; c < children.length; c++) {
-          d = children[c];
-          if (idFn(d) === sett.zoom) {
-            x.domain([d.x0, d.x1]);
-            break;
+        getZoomDatum = function() {
+          var children, c, d;
+          if(sett.zoom){
+            children = root.descendants();
+            for (c = 0; c < children.length; c++) {
+              d = children[c];
+              if (idFn(d) === sett.zoom) {
+                return d;
+              }
+            }
           }
-        }
-      }
+        },
+        arcs, domain, zoomD;
 
       if (dataLayer.empty()) {
         dataLayer = chartInner.append("g")
           .attr("class", "data")
           .attr("transform", "translate(" + innerWidth / 2 + "," + innerHeight / 2 + ")");
+      } else {
+        domain = dataLayer.node()._domain;
+
+        if(domain)
+          x.domain(domain);
       }
+
+      zoomD = getZoomDatum();
+
       arcs = dataLayer
         .selectAll(".arc")
         .data(root.descendants(), idFn);
 
       arcs
         .enter()
+        .call(function() {
+          if (arcs.empty() && zoomD){
+            x.domain([zoomD.x0, zoomD.x1]);
+            dataLayer.node()._domain = x.domain();
+          }
+        })
         .append("g")
         .attr("id", idFn)
         .attr("class", classFn)
@@ -233,8 +247,15 @@ this.sunburstChart = function(svg, settings, data) {
               .text(truncateText);
         });
 
-      arcs.attr("class", classFn)
+      arcs
+        .attr("class", classFn)
         .transition()
+        .call(function() {
+          if(!arcs.empty()) {
+            dataLayer.transition(getTransition())
+              .tween("scale", domainInterpolator(zoomD));
+          }
+        })
         .each(function() {
           var parent = getTransition(d3.select(this).transition());
 
@@ -247,7 +268,6 @@ this.sunburstChart = function(svg, settings, data) {
 
           parent.on("end", textRedrawFn);
         });
-
     },
     rtnObj, process;
 
