@@ -43,6 +43,16 @@
 
 .arc.root {
 	fill: #ccc;
+	transform: rotate(77.6deg);
+}
+
+[lang=fr] .arc.root {
+	transform: rotate(75deg);
+}
+
+.arc.root text {
+	fill: #000;
+	font-weight: bold;
 }
 
 .rootnoc_0.lvl1 {

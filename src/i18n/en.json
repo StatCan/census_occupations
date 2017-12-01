@@ -4,7 +4,8 @@
 			"average_inc": "Average Income",
 			"num_ppl": "Number of People",
 			"pct_ppl": "Percentage of People",
-			"X": "Total - Occupation"
+			"X": "Total - Occupation",
+			"home": "Home"
 		}
 	}
 }

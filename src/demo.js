@@ -58,7 +58,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     },
     padding: 0,
     aspectRatio: 16 / 12,
-    innerRadius: 150,
+    innerRadius: 160,
     getId: function(d) {
       return nocIdPrefix + (d.data.nocId ? d.data.nocId : allNoc);
     },
@@ -68,6 +68,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       return 0;
     },
     getText: function(d) {
+      if (d.data.nocId === undefined && this.zoom !== nocIdPrefix + allNoc)
+        return i18next.t("home", {ns: rootNs}).split("").join("\u2009");
+
       if (d.value > 0) {
         return i18next.t(d.data.nocId, {ns: nocNs}).split("").join("\u2009");
       }
@@ -109,6 +112,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     },
     zoomCallback: function(id) {
       var up;
+      this.zoom = id;
       state.noc = id.replace(nocIdPrefix, "");
       document.getElementById("noc").value = state.noc;
 
