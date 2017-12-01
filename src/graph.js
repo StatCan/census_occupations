@@ -31,7 +31,7 @@ this.sunburstChart = function(svg, settings, data) {
         filteredData = (sett.filterData && typeof sett.filterData === "function") ?
           sett.filterData.call(sett, data) : data,
         outerRadius = Math.min(innerHeight, innerWidth) / 2,
-        innerRadius = sett.innerRadius,
+        innerRadius = sett.innerRadius / 2,
         x = rtnObj.x = d3.scaleLinear()
           .range([0, 2 * Math.PI]),
         y = rtnObj.y = d3.scaleLinear()
