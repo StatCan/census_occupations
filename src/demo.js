@@ -58,6 +58,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     },
     padding: 0,
     aspectRatio: 16 / 12,
+    innerRadius: 150,
     getId: function(d) {
       return nocIdPrefix + (d.data.nocId ? d.data.nocId : allNoc);
     },
