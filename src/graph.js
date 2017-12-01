@@ -7,7 +7,7 @@ var defaults = {
     left: 2
   },
   innerRadius: 60,
-  padding: 0,
+  padding: 0.0008,
   aspectRatio: 16 / 9,
   width: 600
 };
@@ -52,7 +52,12 @@ this.sunburstChart = function(svg, settings, data) {
           .startAngle(getStartAngle)
           .endAngle(getEndAngle)
           .innerRadius(getInnerRadius)
-          .outerRadius(getOuterRadius),
+          .outerRadius(getOuterRadius)
+          .padAngle(sett.padding !== 0 ? function() {
+            var domain = x.domain(),
+              zoom = domain[1] - domain[0] / 1;
+            return sett.padding * zoom;
+          } : null),
         valueFn = sett.getValue ? sett.getValue.bind(sett) : null,
         idFn = sett.getId ? sett.getId.bind(sett) : null,
         textFn = sett.getText ? sett.getText.bind(sett) : null,
@@ -125,7 +130,6 @@ this.sunburstChart = function(svg, settings, data) {
           g.select("path")
             .attrTween("d", zoomArcInterpolator);
 
-
           if (zoomCallback) {
             zoomCallback(id);
           }
@@ -173,8 +177,7 @@ this.sunburstChart = function(svg, settings, data) {
 
           return rtn;
         },
-        partition = d3.partition()
-          .padding(sett.padding),
+        partition = d3.partition(),
         root = partition(
           d3.hierarchy(filteredData)
             .sum(valueFn)
