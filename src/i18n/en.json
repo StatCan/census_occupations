@@ -5,7 +5,8 @@
 			"num_ppl": "Number of individuals",
 			"pct_ppl": "% of all occupations",
 			"X": "Total - Occupation",
-			"home": "Home"
+			"home": "Home",
+			"no_data": "No Data"
 		}
 	}
 }

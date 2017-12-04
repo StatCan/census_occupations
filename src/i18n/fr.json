@@ -5,7 +5,8 @@
 			"num_ppl": "Nombre de personnes",
 			"pct_ppl": "% de toutes les professions",
 			"X": "Total – Profession",
-			"home": "Accueil"
+			"home": "Accueil",
+			"no_data": "Aucune données"
 		}
 	}
 }

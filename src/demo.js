@@ -16,8 +16,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   nocLvlPrefix = "lvl",
   workersProp = "count_elf_fyft",
   medIncProp = "med_earnings",
-  hoverTopClass = "hover",
+  hoverTopCl = "hover",
   selectedCl = "selected",
+  noDataCl = "no-data",
   state = {
     sgc: "61",
     hcdd: 1,
@@ -117,7 +118,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       document.getElementById("noc").value = state.noc;
 
       d3.selectAll("." + selectedCl).classed(selectedCl, false);
-      d3.select("." + hoverTopClass).classed(hoverTopClass, false);
+      d3.select("." + hoverTopCl).classed(hoverTopCl, false);
 
       up = nocData.getNoc(state.noc);
 
@@ -199,6 +200,9 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
     info.select(".income").text(salaryFormatter.format(medianIncome));
     info.select(".num").text(workersFormatter.format(workers));
     info.select(".pt").text(percentFormatter.format(percent));
+
+
+    chart.classed(noDataCl, workers === 0);
   },
   onSelect = function(e) {
     switch(e.target.id){
@@ -232,7 +236,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         }
 
         // Hover Arcs effect
-        chart.classed(hoverTopClass, true);
+        chart.classed(hoverTopCl, true);
 
         while (up.parent !== undefined) {
           up = up.parent;
@@ -251,7 +255,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         });
       },
       hoverOut = function() {
-        chart.classed(hoverTopClass, false);
+        chart.classed(hoverTopCl, false);
         showValues();
       };
 
@@ -271,6 +275,8 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
     .defer(d3.json, nocDataUrl)
     .defer(d3.json, canadaOccupationsDataUrl)
     .await(function(error, noc, occupations) {
+      var info, noData;
+
       nocData = canada_noc(noc);
       canadaOccupationsData = require("canada_census_data")(occupations);
 
@@ -280,7 +286,7 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
         .attr("x", settings.width / 2)
         .attr("dy", "1em");
 
-      var info = chart.append("text")
+      info = chart.append("text")
         .attr("aria-hidden", "true")
         .attr("x", settings.width / 2)
         .attr("y", 195)
@@ -319,6 +325,20 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
         .attr("y", 295)
         .attr("dy", "1.4em")
         .attr("class", "pt value");
+
+      noData = chart.append("text")
+        .attr("class", "no-data-title")
+        .attr("x", settings.width / 2)
+        .attr("y", 80);
+
+      noData.append("tspan")
+        .attr("class", "glyphicon")
+        .text("\ue090");
+
+      noData.append("tspan")
+        .attr("dy", -2)
+        .attr("dx", ".25em")
+        .text(i18next.t("no_data", {ns: rootNs}));
 
       showData();
 

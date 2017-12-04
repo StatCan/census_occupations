@@ -12,13 +12,22 @@
 }
 
 .data .info,
-.data .info-title {
+.data .info-title,
+.data .no-data-title {
 	text-anchor: middle;
 }
 
 .data .info .h6 {
 	font-size: 70%;
 	fill: #2b3a68;
+}
+
+.data :not(.no-data) .no-data-title {
+	display: none;
+}
+
+.no-data-title .glyphicon {
+	fill: #900;
 }
 
 .data .info .value {
