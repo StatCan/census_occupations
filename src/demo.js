@@ -20,10 +20,10 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   selectedCl = "selected",
   noDataCl = "no-data",
   state = {
-    sgc: "61",
+    sgc: canadaSgc,
     hcdd: 1,
     property: workersProp,
-    noc: "2131"
+    noc: allNoc
   },
   workersFormatter = i18n.getNumberFormatter(0),
   salaryFormatter = {
