@@ -1,7 +1,6 @@
 var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   nocI18nRoot = "lib/canada-national-occupational-classification/i18n/",
   rootI18nRoot = "src/i18n/",
-  sgcDataUrl = "lib/statcan_sgc/sgc.json",
   nocDataUrl = "lib/canada-national-occupational-classification/noc.json",
   canadaOccupationsDataUrl = "data/census_occupations.json",
   rootNs = "census_occupations",
@@ -265,15 +264,13 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
       hoverTimeout = setTimeout(hoverOut, 100);
     }
   },
-  nocData, canadaOccupationsData, sgcData, hoverTimeout, chartObj;
+  nocData, canadaOccupationsData, hoverTimeout, chartObj;
 
 i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
   d3.queue()
-    .defer(d3.json, sgcDataUrl)
     .defer(d3.json, nocDataUrl)
     .defer(d3.json, canadaOccupationsDataUrl)
-    .await(function(error, sgcs, noc, occupations) {
-      sgcData = sgcs;
+    .await(function(error, noc, occupations) {
       nocData = canada_noc(noc);
       canadaOccupationsData = require("canada_census_data")(occupations);
 
