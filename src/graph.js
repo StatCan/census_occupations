@@ -37,9 +37,13 @@ this.sunburstChart = function(svg, settings, data) {
         y = rtnObj.y = d3.scaleLinear()
           .range([innerRadius, outerRadius]),
         getStartAngle = function(d) {
+          if (d.parent == null)
+            return -Math.PI / 2;
           return Math.max(0, Math.min(2 * Math.PI, x(d.x0))) - (Math.PI / 2);
         },
         getEndAngle = function(d) {
+          if (d.parent == null)
+            return Math.PI * 2;
           return Math.max(0, Math.min(2 * Math.PI, x(d.x1))) - (Math.PI / 2);
         },
         getInnerRadius = function(d) {

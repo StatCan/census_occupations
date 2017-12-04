@@ -19,10 +19,10 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   hoverTopClass = "hover",
   selectedCl = "selected",
   state = {
-    sgc: canadaSgc,
+    sgc: "61",
     hcdd: 1,
     property: workersProp,
-    noc: "X"
+    noc: "2131"
   },
   workersFormatter = i18n.getNumberFormatter(0),
   salaryFormatter = {
