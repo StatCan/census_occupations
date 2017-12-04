@@ -314,7 +314,7 @@ i18n.load([sgcI18nRoot, nocI18nRoot, rootI18nRoot], function() {
         .attr("x", settings.width / 2)
         .attr("y", 295)
         .attr("class", "h6")
-        .text(i18next.t("num_ppl", {ns: rootNs}));
+        .text(i18next.t("pct_ppl", {ns: rootNs}));
 
       info.append("tspan")
         .attr("x", settings.width / 2)
