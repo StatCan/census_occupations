@@ -1,9 +1,9 @@
 {
 	"fr": {
 		"census_occupations": {
-			"average_inc": "Revenu moyen",
+			"average_inc": "Gains medians ($)",
 			"num_ppl": "Nombre de personnes",
-			"pct_ppl": "Pourcentage de personnes",
+			"pct_ppl": "% au sein de toutes les professions",
 			"X": "Total – Profession",
 			"home": "Accueil"
 		}

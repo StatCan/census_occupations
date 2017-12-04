@@ -1,9 +1,9 @@
 {
 	"en": {
 		"census_occupations": {
-			"average_inc": "Average Income",
-			"num_ppl": "Number of People",
-			"pct_ppl": "Percentage of People",
+			"average_inc": "Median earnings ($)",
+			"num_ppl": "Number of individuals",
+			"pct_ppl": "% of all occupations",
 			"X": "Total - Occupation",
 			"home": "Home"
 		}
