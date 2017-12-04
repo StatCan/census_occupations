@@ -8,7 +8,8 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
   nocNs = "noc",
   container = d3.select(".occupations .data"),
   chart = container.append("svg")
-    .attr("id", "census_occupations"),
+    .attr("id", "census_occupations")
+    .attr("focusable", "false"),
   canadaSgc = "01",
   allNoc = "X",
   rootNocClassPrefix = "rootnoc_",
