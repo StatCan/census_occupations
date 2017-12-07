@@ -197,7 +197,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         .text(title.slice(mid));
     }
 
-    info.select(".income").text(salaryFormatter.format(medianIncome));
+    info.select(".income").text(medianIncome === 0 && workers > 0 ? "X" : salaryFormatter.format(medianIncome));
     info.select(".num").text(workersFormatter.format(workers));
     info.select(".pt").text(percentFormatter.format(percent));
 
