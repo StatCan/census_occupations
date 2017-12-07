@@ -1,3 +1,7 @@
+.data svg {
+	fill: currentColor;
+}
+
 .data .arc path {
 	cursor: pointer;
 	pointer-events: all;
