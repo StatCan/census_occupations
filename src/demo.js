@@ -73,7 +73,7 @@ var sgcI18nRoot = "lib/statcan_sgc/i18n/sgc/",
         return i18next.t("home", {ns: rootNs}).split("").join("\u2009");
 
       if (d.value > 0) {
-        return i18next.t(d.data.nocId, {ns: nocNs}).split("").join("\u2009");
+        return i18next.t(d.data.nocId, {ns: nocNs}).split("").join("\u200A");
       }
       return "";
     },
