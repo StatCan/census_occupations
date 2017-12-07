@@ -113,7 +113,9 @@ this.sunburstChart = function(svg, settings, data) {
           this.parentNode._current = newD;
 
           return function(t) {
-            return arc(i(t));
+            var td = i(t);
+            td.parent = d.parent;
+            return arc(d);
           };
 
         },
