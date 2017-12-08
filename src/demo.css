@@ -23,7 +23,7 @@
 
 .data .info .h6 {
 	font-size: 70%;
-	fill: #2b3a68;
+	fill: currentColor;
 }
 
 .data :not(.no-data) .no-data-title {
@@ -39,11 +39,7 @@
 }
 
 .arc path {
-	transition: opacity 1s;
-}
-
-.arc.selected path {
-	opacity: .5;
+	transition: fill 1s;
 }
 
 .arc.selected text {
@@ -226,4 +222,124 @@
 
 .rootnoc_9.lvl4 {
 	fill: #5e1f1b;
+}
+
+.rootnoc_0.selected.lvl1 path {
+	fill: #A4A0D9;
+}
+
+.rootnoc_0.selected.lvl2 path {
+	fill: #9C99C5;
+}
+
+.rootnoc_0.selected.lvl3 path {
+	fill: #9592B5;
+}
+
+.rootnoc_1.selected.lvl1 path {
+	fill: #98BBAE;
+}
+
+.rootnoc_1.selected.lvl2 path {
+	fill: #92ACA3;
+}
+
+.rootnoc_1.selected.lvl3 path {
+	fill: #8C9F99;
+}
+
+.rootnoc_2.selected.lvl1 path {
+	fill: #B2A2C5;
+}
+
+.rootnoc_2.selected.lvl2 path {
+	fill: #AA9EB9;
+}
+
+.rootnoc_2.selected.lvl3 path {
+	fill: #A197AD;
+}
+
+.rootnoc_3.selected.lvl1 path {
+	fill: #DAA2C2;
+}
+
+.rootnoc_3.selected.lvl2 path {
+	fill: #C79AB3;
+}
+
+.rootnoc_3.selected.lvl3 path {
+	fill: #B693A7;
+}
+
+.rootnoc_4.selected.lvl1 path {
+	fill: #E27B9F;
+}
+
+.rootnoc_4.selected.lvl2 path {
+	fill: #CD7B98;
+}
+
+.rootnoc_4.selected.lvl3 path {
+	fill: #BB7B91;
+}
+
+.rootnoc_5.selected.lvl1 path {
+	fill: #97BCC1;
+}
+
+.rootnoc_5.selected.lvl2 path {
+	fill: #93B0B4;
+}
+
+.rootnoc_5.selected.lvl3 path {
+	fill: #8DA3A6;
+}
+
+.rootnoc_6.selected.lvl1 path {
+	fill: #95BE80;
+}
+
+.rootnoc_6.selected.lvl2 path {
+	fill: #8FB07F;
+}
+
+.rootnoc_6.selected.lvl3 path {
+	fill: #8BA47E;
+}
+
+.rootnoc_7.selected.lvl1 path {
+	fill: #A0B7D4;
+}
+
+.rootnoc_7.selected.lvl2 path {
+	fill: #9AADC5;
+}
+
+.rootnoc_7.selected.lvl3 path {
+	fill: #96A6BB;
+}
+
+.rootnoc_8.selected.lvl1 path {
+	fill: #BBACBB;
+}
+
+.rootnoc_8.selected.lvl2 path {
+	fill: #AFA3AF;
+}
+
+.rootnoc_8.selected.lvl3 path {
+	fill: #A49BA4;
+}
+
+.rootnoc_9.selected.lvl1 path {
+	fill: #DD9C97;
+}
+
+.rootnoc_9.selected.lvl2 path {
+	fill: #CB9692;
+}
+
+.rootnoc_9.selected.lvl3 path {
+	fill: #B78F8C;
 }
